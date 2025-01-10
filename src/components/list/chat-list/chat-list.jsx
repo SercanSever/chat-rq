@@ -1,11 +1,32 @@
 // import { useState } from "react";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import "./chat-list.css";
+import AddUser from "./add-user/add-user";
 const ChatList = () => {
   const [addMode, setAddMode] = useState(false);
+
   const handleAddMode = () => {
     setAddMode(!addMode);
   };
+
+  const addUserRef = useRef(null);
+  const addModeButtonRef = useRef(null);
+  const handleClickOutside = (event) => {
+    if (
+      addUserRef.current &&
+      !addUserRef.current.contains(event.target) &&
+      !addModeButtonRef.current.contains(event.target)
+    ) {
+      setAddMode(false);
+    }
+  };
+
+  useEffect(() => {
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
 
   return (
     <div className="chatList">
@@ -19,6 +40,7 @@ const ChatList = () => {
           alt="plus"
           className="add"
           onClick={handleAddMode}
+          ref={addModeButtonRef}
         />
       </div>
       <div className="item">
@@ -91,6 +113,11 @@ const ChatList = () => {
           <p>Hello friend!</p>
         </div>
       </div>
+      {addMode && (
+        <div ref={addUserRef}>
+          <AddUser />
+        </div>
+      )}
     </div>
   );
 };

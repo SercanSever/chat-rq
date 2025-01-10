@@ -11,12 +11,14 @@ const Login = () => {
     if (!e.target.files[0]) return;
     const file = e.target.files[0];
     const url = URL.createObjectURL(file);
-    console.log(url);
     setUserAvatar({ file, url });
   };
 
   const handleLogin = (e) => {
     e.preventDefault();
+    var form = new FormData(e.target);
+    var { email, password } = Object.fromEntries(form);
+    console.log(email, password);
   };
 
   return (
