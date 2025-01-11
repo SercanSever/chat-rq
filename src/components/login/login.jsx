@@ -1,17 +1,17 @@
 import { useState } from "react";
 import "./login.css";
+import { UploadCloudinary } from "../../lib/upload-cloudinary";
 
 const Login = () => {
   const [userAvatar, setUserAvatar] = useState({
-    file: null,
     url: "",
   });
 
-  const handleUserAvatar = (e) => {
+  const handleUserAvatar = async (e) => {
     if (!e.target.files[0]) return;
     const file = e.target.files[0];
-    const url = URL.createObjectURL(file);
-    setUserAvatar({ file, url });
+    const res = await UploadCloudinary({ file });
+    setUserAvatar({ url: res });
   };
 
   const handleLogin = (e) => {
