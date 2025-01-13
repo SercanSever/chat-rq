@@ -37,7 +37,7 @@ const Login = () => {
         password
       );
 
-      const cloudinaryResponse = await uploadCloudinary({
+      const cloudinaryUrl = await uploadCloudinary({
         file: userAvatar.file,
         userId: userAuthCredentials.user.uid,
       });
@@ -46,7 +46,7 @@ const Login = () => {
         id: userAuthCredentials.user.uid,
         username,
         email,
-        avatar: cloudinaryResponse,
+        avatar: cloudinaryUrl,
         blocked: [],
       });
 
