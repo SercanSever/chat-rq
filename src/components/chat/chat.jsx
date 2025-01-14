@@ -2,17 +2,67 @@ import { useEffect, useRef, useState } from "react";
 import "./chat.css";
 import EmojiPicker from "emoji-picker-react";
 import { db } from "../../lib/firebase.jsx";
-import { doc, onSnapshot } from "firebase/firestore";
+import {
+  arrayUnion,
+  doc,
+  getDoc,
+  onSnapshot,
+  updateDoc,
+} from "firebase/firestore";
+import { useChatStore } from "../../stores/chat-store.jsx";
+import { useUserStore } from "../../stores/user-store.jsx";
+import { format } from "timeago.js";
 
 const Chat = () => {
   const [openEmoji, setOpenEmoji] = useState(false);
   const [inputValue, setInputValue] = useState("");
   const lastMessageRef = useRef(true);
   const [chat, setChat] = useState([]);
+  const { chatId, user } = useChatStore();
+  const { currentUser } = useUserStore();
 
   const handleEmoji = (e) => {
     setInputValue((prev) => prev + e.emoji);
     setOpenEmoji(false);
+  };
+
+  const handleSendMessage = async () => {
+    if (inputValue === "") return;
+
+    try {
+      const text = inputValue.trim();
+      await updateDoc(doc(db, "chats", chatId), {
+        messages: arrayUnion({
+          senderId: currentUser.id,
+          text: text,
+          createdAt: new Date(),
+        }),
+      });
+
+      const userIds = [currentUser.id, user.id];
+
+      userIds.forEach(async (id) => {
+        const userCHatRef = doc(db, "userChats", id);
+        const userChatsSnapshot = await getDoc(userCHatRef);
+        if ((await userChatsSnapshot).exists()) {
+          const userChatsData = userChatsSnapshot.data();
+          const chatIndex = userChatsData.chats.findIndex(
+            (x) => x.chatId === chatId
+          );
+          userChatsData.chats[chatIndex].lastMessage = text;
+          userChatsData.chats[chatIndex].isSeen = id === currentUser.id;
+          userChatsData.chats[chatIndex].updatedAt = new Date();
+
+          await updateDoc(userCHatRef, {
+            chats: userChatsData.chats,
+          });
+        }
+      });
+    } catch (error) {
+      console.log(error);
+    }
+
+    setInputValue("");
   };
 
   useEffect(() => {
@@ -22,26 +72,21 @@ const Chat = () => {
   }, []);
 
   useEffect(() => {
-    const unSub = onSnapshot(
-      doc(db, "chats", "oLiPDO4jwOh4OAeBPLfq"),
-      (res) => {
-        setChat(res.data());
-      }
-    );
+    const unSub = onSnapshot(doc(db, "chats", chatId), (res) => {
+      setChat(res.data());
+    });
 
     return () => {
       unSub();
     };
-  }, []);
-
-  console.log(chat);
+  }, [chatId]);
   return (
     <div className="chat">
       <div className="top">
         <div className="user">
-          <img src="/avatar.png" alt="" />
+          <img src={user.avatar || "/avatar.png"} alt="" />
           <div className="texts">
-            <span>Jane Doe</span>
+            <span>{user.username}</span>
             <p>Lorem ipsum dolor sit amet, consectetur</p>
           </div>
         </div>
@@ -52,168 +97,22 @@ const Chat = () => {
         </div>
       </div>
       <div className="center">
-        <div className="message own">
-          <div className="texts">
-            <p>
-              Lorem ipsum, dolor sit amet consectetur adipisicing elit. Saepe
-              nesciunt eum natus maiores iste in alias recusandae, omnis
-            </p>
-            <span>1 min ago</span>
-          </div>
-        </div>
-        <div className="message">
-          <img src="/avatar.png" alt="" />
-          <div className="texts">
-            <p>
-              Lorem ipsum, dolor sit amet consectetur adipisicing elit. Saepe
-              nesciunt eum natus maiores iste in alias recusandae, omnis
-            </p>
-            <span>1 min ago</span>
-          </div>
-        </div>
-        <div className="message own">
-          <div className="texts">
-            <p>
-              Lorem ipsum, dolor sit amet consectetur adipisicing elit. Saepe
-              nesciunt eum natus maiores iste in alias recusandae, omnis
-            </p>
-            <span>1 min ago</span>
-          </div>
-        </div>
-        <div className="message">
-          <img src="/avatar.png" alt="" />
-          <div className="texts">
-            <p>
-              Lorem ipsum, dolor sit amet consectetur adipisicing elit. Saepe
-              nesciunt eum natus maiores iste in alias recusandae, omnis
-            </p>
-            <span>1 min ago</span>
-          </div>
-        </div>
-        <div className="message own">
-          <div className="texts">
-            <p>
-              Lorem ipsum, dolor sit amet consectetur adipisicing elit. Saepe
-              nesciunt eum natus maiores iste in alias recusandae, omnis
-            </p>
-            <span>1 min ago</span>
-          </div>
-        </div>
-        <div className="message">
-          <img src="/avatar.png" alt="" />
-          <div className="texts">
-            <p>
-              Lorem ipsum, dolor sit amet consectetur adipisicing elit. Saepe
-              nesciunt eum natus maiores iste in alias recusandae, omnis
-            </p>
-            <span>1 min ago</span>
-          </div>
-        </div>
-        <div className="message own">
-          <div className="texts">
-            <p>
-              Lorem ipsum, dolor sit amet consectetur adipisicing elit. Saepe
-              nesciunt eum natus maiores iste in alias recusandae, omnis
-            </p>
-            <span>1 min ago</span>
-          </div>
-        </div>
-        <div className="message">
-          <img src="/avatar.png" alt="" />
-          <div className="texts">
-            <p>
-              Lorem ipsum, dolor sit amet consectetur adipisicing elit. Saepe
-              nesciunt eum natus maiores iste in alias recusandae, omnis
-            </p>
-            <span>1 min ago</span>
-          </div>
-        </div>
-        <div className="message own">
-          <div className="texts">
-            <p>
-              Lorem ipsum, dolor sit amet consectetur adipisicing elit. Saepe
-              nesciunt eum natus maiores iste in alias recusandae, omnis
-            </p>
-            <span>1 min ago</span>
-          </div>
-        </div>
-        <div className="message">
-          <img src="/avatar.png" alt="" />
-          <div className="texts">
-            <p>
-              Lorem ipsum, dolor sit amet consectetur adipisicing elit. Saepe
-              nesciunt eum natus maiores iste in alias recusandae, omnis
-            </p>
-            <span>1 min ago</span>
-          </div>
-        </div>
-        <div className="message own">
-          <div className="texts">
-            <p>
-              Lorem ipsum, dolor sit amet consectetur adipisicing elit. Saepe
-              nesciunt eum natus maiores iste in alias recusandae, omnis
-            </p>
-            <span>1 min ago</span>
-          </div>
-        </div>
-        <div className="message">
-          <img src="/avatar.png" alt="" />
-          <div className="texts">
-            <p>
-              Lorem ipsum, dolor sit amet consectetur adipisicing elit. Saepe
-              nesciunt eum natus maiores iste in alias recusandae, omnis
-            </p>
-            <span>1 min ago</span>
-          </div>
-        </div>
-        <div className="message own">
-          <div className="texts">
-            <p>
-              Lorem ipsum, dolor sit amet consectetur adipisicing elit. Saepe
-              nesciunt eum natus maiores iste in alias recusandae, omnis
-            </p>
-            <span>1 min ago</span>
-          </div>
-        </div>
-        <div className="message">
-          <img src="/avatar.png" alt="" />
-          <div className="texts">
-            <p>
-              Lorem ipsum, dolor sit amet consectetur adipisicing elit. Saepe
-              nesciunt eum natus maiores iste in alias recusandae, omnis
-            </p>
-            <span>1 min ago</span>
-          </div>
-        </div>
-        <div className="message own">
-          <div className="texts">
-            <p>
-              Lorem ipsum, dolor sit amet consectetur adipisicing elit. Saepe
-              nesciunt eum natus maiores iste in alias recusandae, omnis
-            </p>
-            <span>1 min ago</span>
-          </div>
-        </div>
-        <div className="message">
-          <img src="/avatar.png" alt="" />
-          <div className="texts">
-            <p>
-              Lorem ipsum, dolor sit amet consectetur adipisicing elit. Saepe
-              nesciunt eum natus maiores iste in alias recusandae, omnis
-            </p>
-            <span>1 min ago</span>
-          </div>
-        </div>
-        <div className="message own">
-          <div className="texts">
-            <img src="/bg1.jpg" alt="" />
-            <p>
-              Lorem ipsum, dolor sit amet consectetur adipisicing elit. Saepe
-              nesciunt eum natus maiores iste in alias recusandae, omnis
-            </p>
-            <span>1 min ago</span>
-          </div>
-        </div>
+        {chat?.messages?.map((message) => {
+          return (
+            <div
+              className={
+                currentUser.id !== message.senderId ? "message" : "message own"
+              }
+              key={message?.createdAt}
+            >
+              <div className="texts">
+                {/* {message.img && <img src={message.img} alt="" />} */}
+                <p>{message?.text}test</p>
+                <span>{format(message?.createdAt?.toDate())}</span>
+              </div>
+            </div>
+          );
+        })}
         <div ref={lastMessageRef}></div>
       </div>
       <div className="bottom">
@@ -241,7 +140,9 @@ const Chat = () => {
             onClick={() => setOpenEmoji((prev) => !prev)}
           />
         </div>
-        <button className="sendButton">Send</button>
+        <button className="sendButton" onClick={handleSendMessage}>
+          Send
+        </button>
       </div>
     </div>
   );

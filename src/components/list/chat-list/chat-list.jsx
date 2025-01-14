@@ -4,27 +4,51 @@ import "./chat-list.css";
 import AddUser from "./add-user/add-user";
 import { useUserStore } from "../../../stores/user-store.jsx";
 import { db } from "../../../lib/firebase.jsx";
-import { doc, getDoc, onSnapshot } from "firebase/firestore";
+import { doc, getDoc, onSnapshot, updateDoc } from "firebase/firestore";
+import { useChatStore } from "../../../stores/chat-store.jsx";
 
 const ChatList = () => {
   const [addMode, setAddMode] = useState(false);
   const [chats, setChats] = useState([]);
+  const addUserButtonRef = useRef(null);
+  const addModeButtonRef = useRef(null);
   const { currentUser } = useUserStore();
+  const { changeChat } = useChatStore();
 
   const handleAddMode = () => {
     setAddMode(!addMode);
   };
 
-  const addUserRef = useRef(null);
-  const addModeButtonRef = useRef(null);
   const handleClickOutside = (event) => {
     if (
-      addUserRef.current &&
-      !addUserRef.current.contains(event.target) &&
+      addUserButtonRef.current &&
+      !addUserButtonRef.current.contains(event.target) &&
       !addModeButtonRef.current.contains(event.target)
     ) {
       setAddMode(false);
     }
+  };
+
+  const handleSelect = async (chat) => {
+    const userChats = chats.map((item) => {
+      // eslint-disable-next-line no-unused-vars
+      const { user, ...rest } = item;
+      return rest;
+    });
+
+    const chatIndex = userChats.findIndex((x) => x.chatId === chat.chatId);
+    userChats[chatIndex].isSeen = true;
+
+    const userChatsRef = doc(db, "userChats", currentUser.id);
+    try {
+      await updateDoc(userChatsRef, {
+        chats: userChats,
+      });
+    } catch (error) {
+      console.error("Error updating document: ", error);
+    }
+
+    changeChat(chat.chatId, chat.user);
   };
 
   useEffect(() => {
@@ -69,7 +93,16 @@ const ChatList = () => {
       </div>
       {chats &&
         chats.map((chat) => (
-          <div className="item" key={chat.id}>
+          <div
+            className="item"
+            key={chat.chatId}
+            onClick={() => handleSelect(chat)}
+            style={{
+              backgroundColor: chat.isSeen
+                ? "transparent"
+                : "rgba(255, 213, 0, 0.3)",
+            }}
+          >
             <img src={chat.user.avatar || "/avatar.png"} alt="" />
             <div className="texts">
               <span>{chat.user.username}</span>
@@ -78,7 +111,7 @@ const ChatList = () => {
           </div>
         ))}
       {addMode && (
-        <div ref={addUserRef}>
+        <div ref={addUserButtonRef}>
           <AddUser />
         </div>
       )}

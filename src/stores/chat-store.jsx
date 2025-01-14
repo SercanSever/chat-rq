@@ -1,6 +1,4 @@
-import { doc, getDoc } from "firebase/firestore";
 import { create } from "zustand";
-import { db } from "../lib/firebase";
 import { useUserStore } from "./user-store";
 
 export const useChatStore = create((set) => ({
@@ -10,5 +8,32 @@ export const useChatStore = create((set) => ({
   isReceiverBlocked: false,
   changeChat: (chatId, user) => {
     const currentUser = useUserStore.getState().currentUser;
+    if (user.blocked.includes(currentUser.uid)) {
+      return set({
+        chatId,
+        user: null,
+        isCurrentUserBlocked: true,
+        isReceiverBlocked: false,
+      });
+    }
+
+    if (currentUser.blocked.includes(user.id)) {
+      return set({
+        chatId,
+        user: user,
+        isCurrentUserBlocked: false,
+        isReceiverBlocked: true,
+      });
+    }
+
+    return set({
+      chatId,
+      user: user,
+      isCurrentUserBlocked: false,
+      isReceiverBlocked: false,
+    });
+  },
+  changeBlock: () => {
+    set((state) => ({ ...state, isReceiverBlocked: !state.isReceiverBlocked }));
   },
 }));
