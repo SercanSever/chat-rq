@@ -3,14 +3,25 @@ import "./login.css";
 import { toast } from "react-toastify";
 import { uploadCloudinary } from "../../lib/upload-cloudinary";
 import { auth, db } from "../../lib/firebase";
-import { createUserWithEmailAndPassword } from "firebase/auth";
-import { doc, setDoc } from "firebase/firestore";
+import {
+  createUserWithEmailAndPassword,
+  signInWithEmailAndPassword,
+} from "firebase/auth";
+import {
+  collection,
+  doc,
+  getDocs,
+  query,
+  setDoc,
+  where,
+} from "firebase/firestore";
 
 const Login = () => {
   const [userAvatar, setUserAvatar] = useState({
     file: null,
     url: "",
   });
+  const [loading, setloading] = useState(false);
 
   const handleUserAvatar = async (e) => {
     if (!e.target.files[0]) return;
@@ -18,19 +29,39 @@ const Login = () => {
     setUserAvatar({ file, url: URL.createObjectURL(file) });
   };
 
-  const handleLogin = (e) => {
+  const handleLogin = async (e) => {
     e.preventDefault();
+    setloading(true);
     var form = new FormData(e.target);
     var { email, password } = Object.fromEntries(form);
-    console.log(email, password);
+    try {
+      await signInWithEmailAndPassword(auth, email, password);
+    } catch (error) {
+      console.error(error);
+      toast.error("Invalid Credentials");
+    } finally {
+      toast.success("User Logged In Successfully");
+      setloading(false);
+    }
   };
 
   const handleSignup = async (e) => {
     e.preventDefault();
+    setloading(true);
     var form = new FormData(e.target);
     var { username, email, password } = Object.fromEntries(form);
 
     try {
+      const usernameQuery = await getDocs(
+        query(collection(db, "users"), where("username", "==", username))
+      );
+
+      if (!usernameQuery.empty) {
+        toast.error("Username Already In Use");
+        setloading(false);
+        return;
+      }
+
       const userAuthCredentials = await createUserWithEmailAndPassword(
         auth,
         email,
@@ -46,14 +77,13 @@ const Login = () => {
         id: userAuthCredentials.user.uid,
         username,
         email,
-        avatar: cloudinaryUrl,
+        avatar: cloudinaryUrl || "",
         blocked: [],
       });
 
       await setDoc(doc(db, "userChats", userAuthCredentials.user.uid), {
         chats: [],
       });
-
       toast.success("User Created Successfully");
     } catch (error) {
       console.error(error);
@@ -63,6 +93,8 @@ const Login = () => {
       if (error.code === "auth/invalid-email") toast.error("Invalid Email");
       if (error.code === "auth/operation-not-allowed")
         toast.error("Operation Not Allowed");
+    } finally {
+      setloading(false);
     }
   };
 
@@ -73,7 +105,7 @@ const Login = () => {
         <form action="" onSubmit={handleLogin}>
           <input type="text" name="email" placeholder="Email" />
           <input type="password" name="password" placeholder="Password" />
-          <button>Login</button>
+          <button disabled={loading}>{loading ? "Loading..." : "Login"}</button>
         </form>
       </div>
       <div className="seperator"></div>
@@ -95,7 +127,9 @@ const Login = () => {
           <input type="text" name="username" placeholder="Username" />
           <input type="text" name="email" placeholder="Email" />
           <input type="password" name="password" placeholder="Password" />
-          <button>Sign Up</button>
+          <button disabled={loading}>
+            {loading ? "Loading..." : "Signup"}
+          </button>
         </form>
       </div>
     </div>

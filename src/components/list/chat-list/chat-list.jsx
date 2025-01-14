@@ -2,8 +2,14 @@
 import { useEffect, useRef, useState } from "react";
 import "./chat-list.css";
 import AddUser from "./add-user/add-user";
+import { useUserStore } from "../../../stores/userStore.jsx";
+import { db } from "../../../lib/firebase.jsx";
+import { doc, getDoc, onSnapshot } from "firebase/firestore";
+
 const ChatList = () => {
   const [addMode, setAddMode] = useState(false);
+  const [chats, setChats] = useState([]);
+  const { currentUser } = useUserStore();
 
   const handleAddMode = () => {
     setAddMode(!addMode);
@@ -22,11 +28,32 @@ const ChatList = () => {
   };
 
   useEffect(() => {
+    const unSub = onSnapshot(
+      doc(db, "userChats", currentUser.id),
+      async (res) => {
+        const items = res.data().chats;
+
+        const promises = items.map(async (item) => {
+          const docRef = doc(db, "users", item.reveiverId);
+          const userDocSnap = await getDoc(docRef);
+          const user = userDocSnap.data();
+
+          return { ...item, user };
+        });
+
+        const chatData = await Promise.all(promises);
+        setChats(chatData.sort((a, b) => b.updatedAt - a.updatedAt));
+      }
+    );
+
     document.addEventListener("mousedown", handleClickOutside);
     return () => {
+      unSub();
       document.removeEventListener("mousedown", handleClickOutside);
     };
-  }, []);
+  }, [currentUser.id]);
+
+  console.log(chats);
 
   return (
     <div className="chatList">
@@ -43,76 +70,16 @@ const ChatList = () => {
           ref={addModeButtonRef}
         />
       </div>
-      <div className="item">
-        <img src="/avatar.png" alt="" />
-        <div className="texts">
-          <span>Jane Doe</span>
-          <p>Hello friend!</p>
-        </div>
-      </div>
-      <div className="item">
-        <img src="/avatar.png" alt="" />
-        <div className="texts">
-          <span>Jane Doe</span>
-          <p>Hello friend!</p>
-        </div>
-      </div>
-      <div className="item">
-        <img src="/avatar.png" alt="" />
-        <div className="texts">
-          <span>Jane Doe</span>
-          <p>Hello friend!</p>
-        </div>
-      </div>
-      <div className="item">
-        <img src="/avatar.png" alt="" />
-        <div className="texts">
-          <span>Jane Doe</span>
-          <p>Hello friend!</p>
-        </div>
-      </div>
-      <div className="item">
-        <img src="/avatar.png" alt="" />
-        <div className="texts">
-          <span>Jane Doe</span>
-          <p>Hello friend!</p>
-        </div>
-      </div>
-      <div className="item">
-        <img src="/avatar.png" alt="" />
-        <div className="texts">
-          <span>Jane Doe</span>
-          <p>Hello friend!</p>
-        </div>
-      </div>
-      <div className="item">
-        <img src="/avatar.png" alt="" />
-        <div className="texts">
-          <span>Jane Doe</span>
-          <p>Hello friend!</p>
-        </div>
-      </div>
-      <div className="item">
-        <img src="/avatar.png" alt="" />
-        <div className="texts">
-          <span>Jane Doe</span>
-          <p>Hello friend!</p>
-        </div>
-      </div>
-      <div className="item">
-        <img src="/avatar.png" alt="" />
-        <div className="texts">
-          <span>Jane Doe</span>
-          <p>Hello friend!</p>
-        </div>
-      </div>
-      <div className="item">
-        <img src="/avatar.png" alt="" />
-        <div className="texts">
-          <span>Jane Doe</span>
-          <p>Hello friend!</p>
-        </div>
-      </div>
+      {chats &&
+        chats.map((chat) => (
+          <div className="item" key={chat.id}>
+            <img src="/avatar.png" alt="" />
+            <div className="texts">
+              <span>Jane Doe</span>
+              <p>{chat.lasMessage}</p>
+            </div>
+          </div>
+        ))}
       {addMode && (
         <div ref={addUserRef}>
           <AddUser />
