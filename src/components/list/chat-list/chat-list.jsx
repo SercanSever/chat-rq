@@ -2,7 +2,7 @@
 import { useEffect, useRef, useState } from "react";
 import "./chat-list.css";
 import AddUser from "./add-user/add-user";
-import { useUserStore } from "../../../stores/userStore.jsx";
+import { useUserStore } from "../../../stores/user-store.jsx";
 import { db } from "../../../lib/firebase.jsx";
 import { doc, getDoc, onSnapshot } from "firebase/firestore";
 
@@ -34,8 +34,8 @@ const ChatList = () => {
         const items = res.data().chats;
 
         const promises = items.map(async (item) => {
-          const docRef = doc(db, "users", item.reveiverId);
-          const userDocSnap = await getDoc(docRef);
+          const userDocRef = doc(db, "users", item.reveiverId);
+          const userDocSnap = await getDoc(userDocRef);
           const user = userDocSnap.data();
 
           return { ...item, user };
@@ -45,15 +45,12 @@ const ChatList = () => {
         setChats(chatData.sort((a, b) => b.updatedAt - a.updatedAt));
       }
     );
-
     document.addEventListener("mousedown", handleClickOutside);
     return () => {
       unSub();
       document.removeEventListener("mousedown", handleClickOutside);
     };
   }, [currentUser.id]);
-
-  console.log(chats);
 
   return (
     <div className="chatList">
@@ -73,9 +70,9 @@ const ChatList = () => {
       {chats &&
         chats.map((chat) => (
           <div className="item" key={chat.id}>
-            <img src="/avatar.png" alt="" />
+            <img src={chat.user.avatar || "/avatar.png"} alt="" />
             <div className="texts">
-              <span>Jane Doe</span>
+              <span>{chat.user.username}</span>
               <p>{chat.lasMessage}</p>
             </div>
           </div>

@@ -8,8 +8,8 @@
    right: 0;
    bottom: 0;
    margin: auto;
-   width: 30%;
-   height: 30%;
+   width: 48%;
+   height: max-content;
    border: 1px solid rgba(255, 213, 0, 0.4);
 
    form{

@@ -7,7 +7,7 @@ import Notification from "./components/notification/notification";
 import { useEffect } from "react";
 import { onAuthStateChanged } from "firebase/auth";
 import { auth } from "./lib/firebase";
-import { useUserStore } from "./stores/userStore";
+import { useUserStore } from "./stores/user-store.jsx";
 
 function App() {
   const { currentUser, isLoading, fetchUserInfo } = useUserStore();
