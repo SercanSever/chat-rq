@@ -18,12 +18,22 @@ const Chat = () => {
   const [inputValue, setInputValue] = useState("");
   const lastMessageRef = useRef(true);
   const [chat, setChat] = useState([]);
+  const [img, setImg] = useState({
+    file: null,
+    url: "",
+  });
   const { chatId, user } = useChatStore();
   const { currentUser } = useUserStore();
 
   const handleEmoji = (e) => {
     setInputValue((prev) => prev + e.emoji);
     setOpenEmoji(false);
+  };
+
+  const handleImage = async (e) => {
+    if (!e.target.files[0]) return;
+    const file = e.target.files[0];
+    setImg({ file, url: URL.createObjectURL(file) });
   };
 
   const handleSendMessage = async () => {
@@ -80,6 +90,7 @@ const Chat = () => {
       unSub();
     };
   }, [chatId]);
+
   return (
     <div className="chat">
       <div className="top">
@@ -117,7 +128,15 @@ const Chat = () => {
       </div>
       <div className="bottom">
         <div className="icons">
-          <img src="/img.png" alt="" />
+          <label htmlFor="file">
+            <img src="/img.png" alt="" />
+          </label>
+          <input
+            type="file"
+            id="file"
+            style={{ display: "none" }}
+            onChange={handleImage}
+          />
           <img src="/camera.png" alt="" />
           <img src="/mic.png" alt="" />
         </div>
