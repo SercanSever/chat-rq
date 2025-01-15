@@ -18,10 +18,10 @@ const Chat = () => {
   const [inputValue, setInputValue] = useState("");
   const lastMessageRef = useRef(true);
   const [chat, setChat] = useState([]);
-  const [img, setImg] = useState({
-    file: null,
-    url: "",
-  });
+  // const [img, setImg] = useState({
+  //   file: null,
+  //   url: "",
+  // });
   const { chatId, user } = useChatStore();
   const { currentUser } = useUserStore();
 
@@ -30,11 +30,11 @@ const Chat = () => {
     setOpenEmoji(false);
   };
 
-  const handleImage = async (e) => {
-    if (!e.target.files[0]) return;
-    const file = e.target.files[0];
-    setImg({ file, url: URL.createObjectURL(file) });
-  };
+  // const handleImage = async (e) => {
+  //   if (!e.target.files[0]) return;
+  //   const file = e.target.files[0];
+  //   setImg({ file, url: URL.createObjectURL(file) });
+  // };
 
   const handleSendMessage = async () => {
     if (inputValue === "") return;
