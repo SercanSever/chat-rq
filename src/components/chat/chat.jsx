@@ -135,7 +135,7 @@ const Chat = () => {
             type="file"
             id="file"
             style={{ display: "none" }}
-            onChange={handleImage}
+            // onChange={handleImage}
           />
           <img src="/camera.png" alt="" />
           <img src="/mic.png" alt="" />
