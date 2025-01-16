@@ -66,6 +66,9 @@
     overflow-y: overlay;
     transition: overflow-y 0.5s;
     gap: 20px;
+    position: relative;
+    padding-right: 20px;
+    box-sizing: content-box;
 
     scrollbar-width: none; /* Firefox için */
     -ms-overflow-style: none; /* IE ve Edge için */
@@ -77,7 +80,6 @@
       background-color: rgba(0, 0, 0, 0.6);
       border-radius: 10px;
       padding: 10px;
-      padding-right: 40px;
 
       &.own {
         align-self: flex-end;
