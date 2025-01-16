@@ -65,7 +65,7 @@
     overflow-y: hidden;
     overflow-y: overlay;
     transition: overflow-y 0.5s;
-    /* gap: 20px; */
+    gap: 20px;
     scrollbar-width: none; /* Firefox için */
     -ms-overflow-style: none; /* IE ve Edge için */
 
@@ -119,7 +119,8 @@
   }
 
   .center::-webkit-scrollbar {
-    visibility: hidden; /* Webkit tabanlı tarayıcılar için */
+    display: none;
+    opacity: 0;
   }
 
   /* Tüm scroll barlar için genel stil */
