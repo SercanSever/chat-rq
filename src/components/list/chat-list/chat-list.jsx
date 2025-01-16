@@ -12,7 +12,7 @@ const ChatList = () => {
   const addUserButtonRef = useRef(null);
   const addModeButtonRef = useRef(null);
   const [isScrolling, setIsScrolling] = useState(false);
-  const chatListItemRef = useRef(null);
+  const chatListItemRef = useRef();
   const { currentUser } = useUserStore();
   const { changeChat } = useChatStore();
 
@@ -85,7 +85,7 @@ const ChatList = () => {
     const handleScroll = () => {
       setIsScrolling(true);
       clearTimeout(timeout);
-      timeout = setTimeout(() => setIsScrolling(false), 1);
+      timeout = setTimeout(() => setIsScrolling(false), 1000);
     };
 
     chatListElement.addEventListener("scroll", handleScroll);
@@ -113,11 +113,11 @@ const ChatList = () => {
         className="chatListItem"
         ref={chatListItemRef}
         style={{
-          scrollbarWidth: isScrolling ? "thin" : "none",
-          overflowY: isScrolling ? "hidden" : "auto",
+          scrollbarWidth: isScrolling ? "thin" : "none", // Firefox
+          overflowY: isScrolling ? "scroll" : "auto", // Webkit tabanlı tarayıcılar
         }}
       >
-        {/* {chats &&
+        {chats &&
           chats.map((chat) => (
             <div
               className={`item ${chat.isSeen ? "seen" : "unseen"}`}
@@ -130,7 +130,7 @@ const ChatList = () => {
                 <p>{chat.lasMessage}</p>
               </div>
             </div>
-          ))} */}
+          ))}
         <div className="item">
           <img src="/avatar.png" alt="" />
           <div className="texts">
