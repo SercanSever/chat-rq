@@ -62,7 +62,7 @@
     flex: 1;
     padding: 15px;
     margin-top: auto;
-    overflow-y: auto;
+    overflow-y: hidden;
     overflow-y: overlay;
     transition: overflow-y 0.5s;
     gap: 20px;

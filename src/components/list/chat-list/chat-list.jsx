@@ -1,4 +1,3 @@
-// import { useState } from "react";
 import { useEffect, useRef, useState } from "react";
 import "./chat-list.css";
 import AddUser from "./add-user/add-user";
@@ -12,6 +11,8 @@ const ChatList = () => {
   const [chats, setChats] = useState([]);
   const addUserButtonRef = useRef(null);
   const addModeButtonRef = useRef(null);
+  const [isScrolling, setIsScrolling] = useState(false);
+  const chatListItemRef = useRef(null);
   const { currentUser } = useUserStore();
   const { changeChat } = useChatStore();
 
@@ -21,6 +22,7 @@ const ChatList = () => {
 
   const handleClickOutside = (event) => {
     if (
+      addModeButtonRef.current &&
       addUserButtonRef.current &&
       !addUserButtonRef.current.contains(event.target) &&
       !addModeButtonRef.current.contains(event.target)
@@ -76,6 +78,22 @@ const ChatList = () => {
     };
   }, [currentUser.id]);
 
+  useEffect(() => {
+    const chatListElement = chatListItemRef.current;
+    let timeout;
+
+    const handleScroll = () => {
+      setIsScrolling(true);
+      clearTimeout(timeout);
+      timeout = setTimeout(() => setIsScrolling(false), 1);
+    };
+
+    chatListElement.addEventListener("scroll", handleScroll);
+
+    return () => {
+      chatListElement.removeEventListener("scroll", handleScroll);
+    };
+  }, []);
   return (
     <div className="chatList">
       <div className="search">
@@ -91,30 +109,100 @@ const ChatList = () => {
           ref={addModeButtonRef}
         />
       </div>
-      {chats &&
-        chats.map((chat) => (
-          <div
-            className="item"
-            key={chat.chatId}
-            onClick={() => handleSelect(chat)}
-            style={{
-              backgroundColor: chat.isSeen
-                ? "transparent"
-                : "rgba(255, 213, 0, 0.3)",
-            }}
-          >
-            <img src={chat.user.avatar || "/avatar.png"} alt="" />
-            <div className="texts">
-              <span>{chat.user.username}</span>
-              <p>{chat.lasMessage}</p>
+      <div
+        className="chatListItem"
+        ref={chatListItemRef}
+        style={{
+          scrollbarWidth: isScrolling ? "thin" : "none",
+          overflowY: isScrolling ? "hidden" : "auto",
+        }}
+      >
+        {/* {chats &&
+          chats.map((chat) => (
+            <div
+              className={`item ${chat.isSeen ? "seen" : "unseen"}`}
+              key={chat.chatId}
+              onClick={() => handleSelect(chat)}
+            >
+              <img src={chat.user.avatar || "/avatar.png"} alt="" />
+              <div className="texts">
+                <span>{chat.user.username}</span>
+                <p>{chat.lasMessage}</p>
+              </div>
             </div>
+          ))} */}
+        <div className="item">
+          <img src="/avatar.png" alt="" />
+          <div className="texts">
+            <span>test üst</span>
+            <p>Lorem ipsum dolor</p>
           </div>
-        ))}
-      {addMode && (
-        <div ref={addUserButtonRef}>
-          <AddUser />
         </div>
-      )}
+        <div className="item">
+          <img src="/avatar.png" alt="" />
+          <div className="texts">
+            <span>John Doe</span>
+            <p>Lorem ipsum dolor</p>
+          </div>
+        </div>
+        <div className="item">
+          <img src="/avatar.png" alt="" />
+          <div className="texts">
+            <span>John Doe</span>
+            <p>Lorem ipsum dolor</p>
+          </div>
+        </div>
+        <div className="item">
+          <img src="/avatar.png" alt="" />
+          <div className="texts">
+            <span>John Doe</span>
+            <p>Lorem ipsum dolor</p>
+          </div>
+        </div>
+        <div className="item">
+          <img src="/avatar.png" alt="" />
+          <div className="texts">
+            <span>John Doe</span>
+            <p>Lorem ipsum dolor</p>
+          </div>
+        </div>
+        <div className="item">
+          <img src="/avatar.png" alt="" />
+          <div className="texts">
+            <span>John Doe</span>
+            <p>Lorem ipsum dolor</p>
+          </div>
+        </div>
+        <div className="item">
+          <img src="/avatar.png" alt="" />
+          <div className="texts">
+            <span>John Doe</span>
+            <p>Lorem ipsum dolor</p>
+          </div>
+        </div>
+        <div className="item">
+          <img src="/avatar.png" alt="" />
+          <div className="texts">
+            <span>test 3</span>
+            <p>Lorem ipsum dolor</p>
+          </div>
+        </div>
+        <div className="item">
+          <img src="/avatar.png" alt="" />
+          <div className="texts">
+            <span>test 2 </span>
+            <p>Lorem ipsum dolor</p>
+          </div>
+        </div>
+        <div className="item">
+          <img src="/avatar.png" alt="" />
+          <div className="texts">
+            <span>test 1</span>
+            <p>Lorem ipsum dolor</p>
+          </div>
+        </div>
+      </div>
+      {addMode && <AddUser ref={addUserButtonRef} />}
     </div>
   );
 };

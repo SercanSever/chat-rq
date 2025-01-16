@@ -33,7 +33,7 @@
     flex-direction: column;
     gap: 20px;
     padding-top: 20px;
-    overflow-y: auto;
+    overflow-y: hidden;
     overflow-y: overlay;
     transition: overflow-y 0.5s;
     padding-bottom: 10px;

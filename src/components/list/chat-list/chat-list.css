@@ -1,16 +1,15 @@
 .chatList {
   flex: 1;
-  overflow-y: hidden;
-  transition: overflow-y 0.5s;
-
-  scrollbar-width: none; /* Firefox için */
-  -ms-overflow-style: none; /* IE ve Edge için */
+  display: flex;
+  flex-direction: column;
+  height: 100%;
 
   .search {
     display: flex;
     align-items: center;
     gap: 20px;
     padding: 15px;
+    flex-shrink: 0;
 
     .searchBar {
       flex: 1;
@@ -51,39 +50,54 @@
     }
   }
 
-  .item {
+  .chatListItem {
     display: flex;
-    align-items: center;
-    cursor: pointer;
-    gap: 30px;
-    padding: 15px;
-    border-radius: 10px;
-    border-bottom: 1px solid rgba(0, 0, 0, 0.34);
+    flex-direction: column;
+    overflow-y: hidden;
+    overflow-y: overlay;
+    transition: overflow-y 0.5s;
 
-    &:hover {
-      background-color: rgba(0, 0, 0, 0.418);
-    }
+    scrollbar-width: none; /* Firefox için */
+    -ms-overflow-style: none; /* IE ve Edge için */
 
-    img {
-      width: 50px;
-      height: 50px;
-      border-radius: 50%;
-      object-fit: cover;
-    }
-
-    .texts {
+    .item {
       display: flex;
-      flex-direction: column;
-      gap: 5px;
+      align-items: center;
+      cursor: pointer;
+      gap: 30px;
+      padding: 15px;
+      border-radius: 10px;
+      border-bottom: 1px solid rgba(0, 0, 0, 0.34);
 
-      span {
-        font-weight: 500;
+      &:hover {
+        background-color: rgba(0, 0, 0, 0.5);
       }
 
-      p {
-        font-size: 14px;
-        font-weight: 300;
-        color: rgba(255, 255, 255, 0.7);
+      &.unseen {
+        background-color: rgba(255, 213, 0, 0.5);
+      }
+
+      img {
+        width: 50px;
+        height: 50px;
+        border-radius: 50%;
+        object-fit: cover;
+      }
+
+      .texts {
+        display: flex;
+        flex-direction: column;
+        gap: 5px;
+
+        span {
+          font-weight: 500;
+        }
+
+        p {
+          font-size: 20px;
+          font-weight: 300;
+          color: rgba(255, 255, 255, 0.7);
+        }
       }
     }
   }
