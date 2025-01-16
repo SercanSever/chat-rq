@@ -67,7 +67,7 @@
     transition: overflow-y 0.5s;
     gap: 20px;
     position: relative;
-    padding-right: 20px;
+    padding-right: 40px;
     box-sizing: content-box;
 
     scrollbar-width: none; /* Firefox için */
