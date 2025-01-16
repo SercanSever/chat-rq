@@ -101,6 +101,7 @@ const Login = () => {
   return (
     <div className="login">
       <div className="item">
+        <img src="/chat-rq-logo.png" alt="" />
         <h2>Welcome</h2>
         <form action="" onSubmit={handleLogin}>
           <input type="text" name="email" placeholder="Email" />

@@ -2,13 +2,12 @@
   margin: 0;
   padding: 0;
   box-sizing: border-box;
-  font-family: 'Inter', 'Roboto', 'Open Sans', 'Lato', Arial, sans-serif;
+  font-family: "Inter", "Roboto", "Open Sans", "Lato", Arial, sans-serif;
   line-height: 1.5;
   color: whitesmoke;
-  
 }
 
-body{
+body {
   background-image: url("/bg5.jpg");
   background-repeat: no-repeat;
   background-size: cover;
@@ -16,21 +15,47 @@ body{
   align-items: center;
   justify-content: center;
   height: 100vh;
-  width: 100vw; 
+  width: 100vw;
 }
 
-.container{
+body {
+  --sb-track-color: rgba(4, 4, 4, 0.8);
+  --sb-thumb-color: rgba(72, 57, 137, 0.8);
+  --sb-size: 9px;
+}
+
+body::-webkit-scrollbar {
+  width: var(--sb-size);
+}
+
+body::-webkit-scrollbar-track {
+  background: var(--sb-track-color);
+  border-radius: 15px;
+}
+
+body::-webkit-scrollbar-thumb {
+  background: var(--sb-thumb-color);
+  border-radius: 15px;
+}
+
+@supports not selector(::-webkit-scrollbar) {
+  body {
+    scrollbar-color: var(--sb-thumb-color) var(--sb-track-color);
+  }
+}
+
+.container {
   width: 80vw;
   height: 90vh;
   border-radius: 15px;
-  background-color: rgba(4, 4, 4, 0.60);
+  background-color: rgba(4, 4, 4, 0.6);
   backdrop-filter: blur(10px) saturate(100%);
-  border: 1px solid rgba(255, 255, 255, 0.60);
+  border: 1px solid rgba(255, 255, 255, 0.6);
   display: flex;
   justify-content: space-between;
 }
 
-.laoding{
+.laoding {
   display: flex;
   align-items: center;
   justify-content: center;
@@ -38,5 +63,5 @@ body{
   height: 100%;
   font-size: 36px;
   font-weight: bold;
-  background-color: rgba(0, 0, 0, 0.60);
+  background-color: rgba(0, 0, 0, 0.6);
 }
