@@ -17,31 +17,11 @@ body {
   height: 100vh;
   width: 100vw;
 }
-
-body {
+/* Scroll bar renk değişkenlerini tanımla */
+:root {
   --sb-track-color: rgba(4, 4, 4, 0.8);
   --sb-thumb-color: rgba(72, 57, 137, 0.8);
   --sb-size: 9px;
-}
-
-body::-webkit-scrollbar {
-  width: var(--sb-size);
-}
-
-body::-webkit-scrollbar-track {
-  background: var(--sb-track-color);
-  border-radius: 15px;
-}
-
-body::-webkit-scrollbar-thumb {
-  background: var(--sb-thumb-color);
-  border-radius: 15px;
-}
-
-@supports not selector(::-webkit-scrollbar) {
-  body {
-    scrollbar-color: var(--sb-thumb-color) var(--sb-track-color);
-  }
 }
 
 .container {

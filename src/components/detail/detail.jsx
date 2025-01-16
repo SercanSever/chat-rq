@@ -1,7 +1,26 @@
+import { useEffect, useRef, useState } from "react";
 import { auth } from "../../lib/firebase";
 
 import "./detail.css";
 const Detail = () => {
+  const [isScrolling, setIsScrolling] = useState(false);
+  const infoRef = useRef();
+
+  useEffect(() => {
+    const infoElement = infoRef.current;
+    let timeout;
+    const handleScroll = () => {
+      setIsScrolling(true);
+      clearTimeout(timeout);
+      timeout = setTimeout(() => setIsScrolling(false), 1000);
+    };
+
+    infoElement.addEventListener("scroll", handleScroll);
+
+    return () => {
+      infoElement.removeEventListener("scroll", handleScroll);
+    };
+  }, []);
   return (
     <div className="detail">
       <div className="user">
@@ -9,7 +28,14 @@ const Detail = () => {
         <h2>Jane Doe</h2>
         <p>Lorem ipsum dolor sit amet consectetur adipisicing </p>
       </div>
-      <div className="info">
+      <div
+        className="info"
+        ref={infoRef}
+        style={{
+          scrollbarWidth: isScrolling ? "thin" : "none", // Firefox
+          overflowY: isScrolling ? "scroll" : "auto", // Webkit tabanlı tarayıcılar
+        }}
+      >
         <div className="option">
           <div className="title">
             <span>Chat Settings</span>

@@ -24,6 +24,8 @@ const Chat = () => {
   // });
   const { chatId, user } = useChatStore();
   const { currentUser } = useUserStore();
+  const [isScrolling, setIsScrolling] = useState(false);
+  const centerRef = useRef();
 
   const handleEmoji = (e) => {
     setInputValue((prev) => prev + e.emoji);
@@ -91,6 +93,23 @@ const Chat = () => {
     };
   }, [chatId]);
 
+  useEffect(() => {
+    const centerElement = centerRef.current;
+    let timeout;
+
+    const handleScroll = () => {
+      setIsScrolling(true);
+      clearTimeout(timeout);
+      timeout = setTimeout(() => setIsScrolling(false), 1000);
+    };
+
+    centerElement.addEventListener("scroll", handleScroll);
+
+    return () => {
+      centerElement.removeEventListener("scroll", handleScroll);
+    };
+  }, []);
+
   return (
     <div className="chat">
       <div className="top">
@@ -107,7 +126,14 @@ const Chat = () => {
           <img src="/info.png" alt="" />
         </div>
       </div>
-      <div className="center">
+      <div
+        className="center"
+        ref={centerRef}
+        style={{
+          scrollbarWidth: isScrolling ? "thin" : "none", // Firefox
+          overflowY: isScrolling ? "scroll" : "auto", // Webkit tabanlı tarayıcılar
+        }}
+      >
         {chat?.messages?.map((message) => {
           return (
             <div
