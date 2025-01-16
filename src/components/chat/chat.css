@@ -66,12 +66,10 @@
     overflow-y: overlay;
     transition: overflow-y 0.5s;
     gap: 20px;
-    position: relative;
-    padding-right: 40px;
-    box-sizing: content-box;
 
     scrollbar-width: none; /* Firefox için */
     -ms-overflow-style: none; /* IE ve Edge için */
+    scrollbar-gutter: stable; /* Scrollbar'ın içerik konumunu etkilememesi için */
 
     .message {
       display: flex;
