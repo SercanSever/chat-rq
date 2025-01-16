@@ -119,7 +119,7 @@
   }
 
   .center::-webkit-scrollbar {
-    display: none; /* Webkit tabanlı tarayıcılar için */
+    visibility: hidden; /* Webkit tabanlı tarayıcılar için */
   }
 
   /* Tüm scroll barlar için genel stil */
