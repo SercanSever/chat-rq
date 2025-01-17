@@ -22,6 +22,7 @@ const Login = () => {
     url: "",
   });
   const [loading, setloading] = useState(false);
+  const [seperator, setSeperator] = useState(true);
 
   const handleUserAvatar = async (e) => {
     if (!e.target.files[0]) return;
@@ -68,10 +69,13 @@ const Login = () => {
         password
       );
 
-      const cloudinaryUrl = await uploadCloudinary({
-        file: userAvatar.file,
-        userId: userAuthCredentials.user.uid,
-      });
+      let cloudinaryUrl = "";
+      if (userAvatar.file !== null) {
+        cloudinaryUrl = await uploadCloudinary({
+          file: userAvatar.file,
+          userId: userAuthCredentials.user.uid,
+        });
+      }
 
       await setDoc(doc(db, "users", userAuthCredentials.user.uid), {
         id: userAuthCredentials.user.uid,
@@ -108,13 +112,41 @@ const Login = () => {
           <input type="password" name="password" placeholder="Password" />
           <button disabled={loading}>{loading ? "Loading..." : "Login"}</button>
         </form>
+        <span onClick={() => setSeperator(false)}>
+          Don't you have an account ?
+        </span>
       </div>
-      <div className="seperator"></div>
+      <div className={seperator ? "seperator login" : "seperator"}>
+        <div className="seperatorContent">
+          <img src="/chat-rq-logo-background.png" alt="" />
+
+          {seperator ? (
+            <>
+              <h2>ChatRQ</h2>
+              <p>Welcome Back!</p>
+              <span className="description">
+                Log in to continue the conversation.
+              </span>
+            </>
+          ) : (
+            <>
+              <h2>ChatRQ</h2>
+              <p>Join ChatRQ Today!</p>
+              <span className="description">
+                Create an account and start chatting with the friends.
+              </span>
+            </>
+          )}
+        </div>
+      </div>
       <div className="item">
         <h2>Create an Account</h2>
         <form onSubmit={handleSignup}>
           <label htmlFor="file">
-            <img src={userAvatar.url || "/avatar.png"} alt="" />
+            <img
+              src={userAvatar.url || "/chat-rq-logo-background.png"}
+              alt=""
+            />
             <p style={userAvatar.url !== "" ? { display: "none" } : {}}>
               Upload Avatar
             </p>
@@ -132,6 +164,7 @@ const Login = () => {
             {loading ? "Loading..." : "Signup"}
           </button>
         </form>
+        <span onClick={() => setSeperator(true)}>Let's login!</span>
       </div>
     </div>
   );

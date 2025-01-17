@@ -13,6 +13,13 @@ import { useChatStore } from "../../stores/chat-store.jsx";
 import { useUserStore } from "../../stores/user-store.jsx";
 import { format } from "timeago.js";
 import { uploadChatFileCloudinary } from "../../lib/upload-cloudinary.jsx";
+import CheckImage from "../check-image/check-image.jsx";
+import {
+  useCaptureImageStore,
+  useImageStore,
+} from "../../stores/image-store.jsx";
+import ImageCapture from "./image-capture/image-capture.jsx";
+import { use } from "react";
 
 const Chat = () => {
   const [openEmoji, setOpenEmoji] = useState(false);
@@ -23,7 +30,10 @@ const Chat = () => {
   const { chatId, user } = useChatStore();
   const { currentUser } = useUserStore();
   const [isScrolling, setIsScrolling] = useState(false);
+  const [checkImage, setCheckImage] = useState(null);
   const centerRef = useRef();
+  const { storedImage, addImageToStore } = useImageStore();
+  const { isOpen, changeIsOpen } = useCaptureImageStore();
 
   const handleEmoji = (e) => {
     setInputValue((prev) => prev + e.emoji);
@@ -133,109 +143,123 @@ const Chat = () => {
   }, []);
 
   return (
-    <div className="chat">
-      <div className="top">
-        <div className="user">
-          <img src={user.avatar || "/avatar.png"} alt="" />
-          <div className="texts">
-            <span>{user.username}</span>
-            <p>Lorem ipsum dolor sit amet, consectetur</p>
+    <>
+      {storedImage && <CheckImage checkImage={checkImage} />}
+      {isOpen && <ImageCapture />}
+      <div className="chat">
+        <div className="top">
+          <div className="user">
+            <img src={user.avatar || "/avatar.png"} alt="" />
+            <div className="texts">
+              <span>{user.username}</span>
+              <p>Lorem ipsum dolor sit amet, consectetur</p>
+            </div>
+          </div>
+          <div className="icons">
+            <img src="/phone.png" alt="" />
+            <img src="/video.png" alt="" />
+            <img src="/info.png" alt="" />
           </div>
         </div>
-        <div className="icons">
-          <img src="/phone.png" alt="" />
-          <img src="/video.png" alt="" />
-          <img src="/info.png" alt="" />
-        </div>
-      </div>
-      <div
-        className="center"
-        ref={centerRef}
-        style={{
-          scrollbarWidth: isScrolling ? "thin" : "none", // Firefox
-          overflowY: isScrolling ? "scroll" : "auto", // Webkit tabanlı tarayıcılar
-        }}
-      >
-        {chat?.messages?.map((message) => {
-          return (
-            <div
-              className={
-                currentUser.id !== message.senderId ? "message" : "message own"
-              }
-              key={message?.createdAt}
-            >
-              <div className="texts">
-                <div className="messageImages">
-                  {message.images &&
-                    message.images.map((item) => {
-                      return <img src={item} key={item} alt="" />;
-                    })}
+        <div
+          className="center"
+          ref={centerRef}
+          style={{
+            scrollbarWidth: isScrolling ? "thin" : "none", // Firefox
+            overflowY: isScrolling ? "scroll" : "auto", // Webkit tabanlı tarayıcılar
+          }}
+        >
+          {chat?.messages?.map((message) => {
+            return (
+              <div
+                className={
+                  currentUser.id !== message.senderId
+                    ? "message"
+                    : "message own"
+                }
+                key={message?.createdAt}
+              >
+                <div className="texts">
+                  <div className="messageImages">
+                    {message.images &&
+                      message.images.map((item) => {
+                        return (
+                          <img
+                            src={item}
+                            key={item}
+                            alt=""
+                            onClick={() => addImageToStore(item)}
+                          />
+                        );
+                      })}
+                  </div>
+                  <p>{message?.text}</p>
+                  <span>{format(message?.createdAt?.toDate())}</span>
                 </div>
-                <p>{message?.text}</p>
-                <span>{format(message?.createdAt?.toDate())}</span>
               </div>
-            </div>
-          );
-        })}
-        <div ref={lastMessageRef}></div>
-      </div>
+            );
+          })}
+          <div ref={lastMessageRef}></div>
+        </div>
 
-      {img.length > 0 && (
-        <div className="textImage">
-          {img.map((imgItem) => (
-            <div className="imgItem" key={imgItem.url}>
-              <img
-                className="closeBtn"
-                src="/close.png"
-                alt=""
-                onClick={() => handleRemoveImage(imgItem.url)}
-              />
-              <img src={imgItem.url} alt="" />
-            </div>
-          ))}
-        </div>
-      )}
+        {img.length > 0 && (
+          <div className="textImage">
+            {img.map((imgItem) => (
+              <div className="imgItem" key={imgItem.url}>
+                <img
+                  className="closeBtn"
+                  src="/close.png"
+                  alt=""
+                  onClick={() => handleRemoveImage(imgItem.url)}
+                />
+                <img src={imgItem.url} alt="" />
+              </div>
+            ))}
+          </div>
+        )}
 
-      <div className="bottom">
-        <div className="icons">
-          <label htmlFor="file">
-            <img src="/img.png" alt="" />
-          </label>
-          <input
-            type="file"
-            id="file"
-            style={{ display: "none" }}
-            multiple={true}
-            onChange={handleImage}
+        <div className="bottom">
+          <div className="icons">
+            <label htmlFor="file">
+              <img src="/img.png" alt="" />
+            </label>
+            <input
+              type="file"
+              id="file"
+              style={{ display: "none" }}
+              multiple={true}
+              onChange={handleImage}
+            />
+            <img src="/camera.png" alt="" onClick={() => changeIsOpen(true)} />
+
+            <img src="/mic.png" alt="" />
+          </div>
+          <textarea
+            rows={1}
+            type="text"
+            placeholder="Send a message"
+            className="textInput"
+            onChange={(e) => setInputValue(e.target.value)}
+            value={inputValue}
           />
-          <img src="/camera.png" alt="" />
-          <img src="/mic.png" alt="" />
+          <div className="emoji">
+            {openEmoji && (
+              <div className="picker">
+                <EmojiPicker onEmojiClick={handleEmoji} />
+              </div>
+            )}
+            <img
+              src="/emoji.png"
+              alt=""
+              onClick={() => setOpenEmoji((prev) => !prev)}
+            />
+          </div>
+          <button className="sendButton" onClick={handleSendMessage}>
+            Send
+          </button>
         </div>
-        <textarea
-          rows={1}
-          type="text"
-          placeholder="Send a message"
-          className="textInput"
-          onChange={(e) => setInputValue(e.target.value)}
-          value={inputValue}
-        />
-        <div className="emoji">
-          {openEmoji && (
-            <div className="picker">
-              <EmojiPicker onEmojiClick={handleEmoji} />
-            </div>
-          )}
-          <img
-            src="/emoji.png"
-            alt=""
-            onClick={() => setOpenEmoji((prev) => !prev)}
-          />
-        </div>
-        <button className="sendButton" onClick={handleSendMessage}>
-          Send
-        </button>
       </div>
-    </div>
+    </>
   );
 };
 

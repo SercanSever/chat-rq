@@ -3,6 +3,19 @@
   align-items: center;
   width: 100%;
   height: 100%;
+  position: relative;
+
+  span {
+    font-size: 12px;
+    font-weight: 300;
+    color: rgba(255, 255, 255, 0.7);
+
+    &:hover {
+      text-decoration: underline;
+      transform: scale(1.01);
+      cursor: pointer;
+    }
+  }
 
   .item {
     flex: 1;
@@ -17,6 +30,7 @@
       object-fit: contain;
       border-radius: 50%;
     }
+
     form {
       display: flex;
       flex-direction: column;
@@ -33,8 +47,8 @@
         }
 
         img {
-          width: 100px;
-          height: 100px;
+          width: 80px;
+          height: 80px;
           border-radius: 50%;
           object-fit: cover;
         }
@@ -76,11 +90,79 @@
         }
       }
     }
+  }
 
-    .seperator {
-      height: 80%;
-      width: 2px;
-      background-color: rgba(255, 255, 255, 0.405);
+  .seperator {
+    z-index: 30;
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 50%;
+    background-color: rgba(72, 57, 137);
+    border-radius: 15px;
+    transition: all 0.9s ease;
+
+    .seperatorContent {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100%;
+      width: 100%;
+      gap: 10px;
+      transform-origin: center;
+
+      img {
+        width: 100px;
+        height: 100px;
+        object-fit: contain;
+      }
+
+      h2 {
+        font-size: 60px;
+        color: rgba(255, 255, 255, 0.7);
+        font-weight: 300;
+      }
+
+      p {
+        font-size: 18px;
+        color: rgba(255, 255, 255, 0.7);
+        font-weight: 300;
+      }
+
+      .description {
+        font-size: 18px;
+        font-weight: 300;
+        color: rgba(255, 255, 255, 0.7);
+        text-align: center;
+        text-decoration: none;
+        cursor: auto;
+      }
+    }
+
+    &.login {
+      right: 0;
+      left: auto;
+      background-color: rgb(251, 222, 75);
+      transform: rotate(180deg);
+
+      .seperatorContent {
+        transform: rotate(180deg);
+        transform-origin: center;
+
+        h2 {
+          color: rgba(0, 0, 0, 0.7);
+        }
+
+        p {
+          color: rgba(0, 0, 0, 0.7);
+        }
+
+        .description {
+          color: rgba(0, 0, 0, 0.7);
+        }
+      }
     }
   }
 }

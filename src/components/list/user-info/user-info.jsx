@@ -6,7 +6,10 @@ const UserInfo = () => {
   return (
     <div className="userInfo">
       <div className="user">
-        <img src={currentUser.avatar || "/avatar.png"} alt="" />
+        <img
+          src={currentUser.avatar || "/chat-rq-logo-background.png"}
+          alt=""
+        />
         <h3>{currentUser.username}</h3>
       </div>
       <div className="icons">
