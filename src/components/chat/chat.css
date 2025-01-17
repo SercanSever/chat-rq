@@ -118,12 +118,10 @@
     }
   }
 
-  .center::-webkit-scrollbar {
+  /* .center::-webkit-scrollbar {
     display: none;
-    opacity: 0;
-  }
+  } */
 
-  /* Tüm scroll barlar için genel stil */
   .center::-webkit-scrollbar {
     width: var(--sb-size);
     height: var(--sb-size);
@@ -143,6 +141,54 @@
   .center {
     scrollbar-color: var(--sb-thumb-color) var(--sb-track-color);
     scrollbar-width: thin; /* Firefox için */
+  }
+
+  .textImage {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    background-color: rgba(9, 5, 5, 0.5);
+    height: max-content;
+    padding: 10px;
+    border-radius: 20px;
+    gap: 20px;
+
+    .imgItem {
+      position: relative;
+    }
+
+    .closeBtn {
+      position: absolute;
+      top: 5px;
+      right: 5px;
+      background-color: rgba(0, 0, 0, 0.6);
+      border: none;
+      outline: none;
+      padding: 3px;
+      border-radius: 50%;
+      cursor: pointer;
+      color: white;
+      width: 20px;
+      height: 20px;
+      object-fit: cover;
+      cursor: pointer;
+      background-color: rgba(255, 255, 255, 0.5);
+      z-index: 10;
+      &:hover {
+        background-color: rgba(158, 145, 145, 0.5);
+      }
+    }
+
+    img {
+      width: 100px;
+      height: 100px;
+      border-radius: 10px;
+      object-fit: cover;
+      cursor: pointer;
+      &:hover {
+        transform: scale(1.02);
+      }
+    }
   }
 
   .bottom {

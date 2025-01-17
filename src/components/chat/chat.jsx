@@ -12,16 +12,14 @@ import {
 import { useChatStore } from "../../stores/chat-store.jsx";
 import { useUserStore } from "../../stores/user-store.jsx";
 import { format } from "timeago.js";
+import { uploadChatFileCloudinary } from "../../lib/upload-cloudinary.jsx";
 
 const Chat = () => {
   const [openEmoji, setOpenEmoji] = useState(false);
   const [inputValue, setInputValue] = useState("");
   const lastMessageRef = useRef(true);
   const [chat, setChat] = useState([]);
-  // const [img, setImg] = useState({
-  //   file: null,
-  //   url: "",
-  // });
+  const [img, setImg] = useState([]);
   const { chatId, user } = useChatStore();
   const { currentUser } = useUserStore();
   const [isScrolling, setIsScrolling] = useState(false);
@@ -31,23 +29,41 @@ const Chat = () => {
     setInputValue((prev) => prev + e.emoji);
     setOpenEmoji(false);
   };
+  //Todo implement img uplaod function
+  const handleImage = async (e) => {
+    if (!e.target.files) return;
+    const files = Array.from(e.target.files);
+    const newImages = files.map((file) => ({
+      file,
+      url: URL.createObjectURL(file),
+    }));
 
-  // const handleImage = async (e) => {
-  //   if (!e.target.files[0]) return;
-  //   const file = e.target.files[0];
-  //   setImg({ file, url: URL.createObjectURL(file) });
-  // };
+    setImg((prev) => [...prev, newImages]);
+  };
+
+  useEffect(() => {
+    console.log(img);
+  }, [img]);
 
   const handleSendMessage = async () => {
     if (inputValue === "") return;
 
     try {
+      let uploadChatFile;
+      if (img.file) {
+        uploadChatFile = await uploadChatFileCloudinary({
+          file: img.file,
+          chatId,
+        });
+      }
+
       const text = inputValue.trim();
       await updateDoc(doc(db, "chats", chatId), {
         messages: arrayUnion({
           senderId: currentUser.id,
           text: text,
           createdAt: new Date(),
+          ...(uploadChatFile && { img: uploadChatFile }),
         }),
       });
 
@@ -73,7 +89,7 @@ const Chat = () => {
     } catch (error) {
       console.log(error);
     }
-
+    setImg({ file: null, url: "" });
     setInputValue("");
   };
 
@@ -82,6 +98,12 @@ const Chat = () => {
       lastMessageRef.current.scrollIntoView({ behavior: "smooth" });
     }
   }, []);
+
+  useEffect(() => {
+    if (lastMessageRef.current) {
+      lastMessageRef.current.scrollIntoView({ behavior: "smooth" });
+    }
+  }, [chat]);
 
   useEffect(() => {
     const unSub = onSnapshot(doc(db, "chats", chatId), (res) => {
@@ -109,6 +131,10 @@ const Chat = () => {
       centerElement.removeEventListener("scroll", handleScroll);
     };
   }, []);
+
+  const handleRemoveImage = () => {
+    setImg({ file: null, url: "" });
+  };
 
   return (
     <div className="chat">
@@ -152,6 +178,21 @@ const Chat = () => {
         })}
         <div ref={lastMessageRef}></div>
       </div>
+
+      {img.url && (
+        <div className="textImage">
+          <div className="imgItem">
+            <img
+              className="closeBtn"
+              src="/close.png"
+              alt=""
+              onClick={handleRemoveImage}
+            />
+            <img src={img.url} alt="" />
+          </div>
+        </div>
+      )}
+
       <div className="bottom">
         <div className="icons">
           <label htmlFor="file">
@@ -161,7 +202,8 @@ const Chat = () => {
             type="file"
             id="file"
             style={{ display: "none" }}
-            // onChange={handleImage}
+            multiple={true}
+            onChange={handleImage}
           />
           <img src="/camera.png" alt="" />
           <img src="/mic.png" alt="" />
