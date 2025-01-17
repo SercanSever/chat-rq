@@ -24,6 +24,7 @@
       width: 30px;
       height: 30px;
       box-shadow: none;
+      object-fit: cover;
     }
 
     &:hover {
@@ -37,5 +38,6 @@
     width: 80%;
     height: 80%;
     border-radius: 10px;
+    object-fit: contain;
   }
 }

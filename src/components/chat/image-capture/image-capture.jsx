@@ -9,8 +9,8 @@ const ImageCapture = () => {
 
   const capturePhoto = () => {
     const imageSrc = webcamRef.current.getScreenshot();
-    console.log(imageSrc);
     addCapturedImage(imageSrc);
+    changeIsOpen(false);
   };
 
   const handleClose = () => {

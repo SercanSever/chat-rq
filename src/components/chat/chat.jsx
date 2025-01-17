@@ -30,10 +30,10 @@ const Chat = () => {
   const { chatId, user } = useChatStore();
   const { currentUser } = useUserStore();
   const [isScrolling, setIsScrolling] = useState(false);
-  const [checkImage, setCheckImage] = useState(null);
   const centerRef = useRef();
   const { storedImage, addImageToStore } = useImageStore();
-  const { isOpen, changeIsOpen } = useCaptureImageStore();
+  const { isOpen, changeIsOpen, capturedImage, removeCapturedImage } =
+    useCaptureImageStore();
 
   const handleEmoji = (e) => {
     setInputValue((prev) => prev + e.emoji);
@@ -51,7 +51,7 @@ const Chat = () => {
   };
 
   const handleSendMessage = async () => {
-    if (inputValue === "" && img.length === 0) return;
+    if (inputValue === "" && img.length === 0 && !capturedImage) return;
 
     try {
       let uploadChatFile = [];
@@ -61,6 +61,11 @@ const Chat = () => {
           return url;
         });
         uploadChatFile = await Promise.all(uploadPromises);
+      }
+
+      if (capturedImage) {
+        const url = await uploadChatFileCloudinary(capturedImage, chatId);
+        uploadChatFile.push(url);
       }
 
       const text = inputValue.trim();
@@ -97,6 +102,7 @@ const Chat = () => {
     }
     setImg([]);
     setInputValue("");
+    removeCapturedImage();
   };
 
   const handleRemoveImage = (url) => {
@@ -144,7 +150,7 @@ const Chat = () => {
 
   return (
     <>
-      {storedImage && <CheckImage checkImage={checkImage} />}
+      {storedImage && <CheckImage />}
       {isOpen && <ImageCapture />}
       <div className="chat">
         <div className="top">
@@ -182,16 +188,14 @@ const Chat = () => {
                 <div className="texts">
                   <div className="messageImages">
                     {message.images &&
-                      message.images.map((item) => {
-                        return (
-                          <img
-                            src={item}
-                            key={item}
-                            alt=""
-                            onClick={() => addImageToStore(item)}
-                          />
-                        );
-                      })}
+                      message.images.map((item) => (
+                        <img
+                          src={item}
+                          key={item}
+                          alt=""
+                          onClick={() => addImageToStore(item)}
+                        />
+                      ))}
                   </div>
                   <p>{message?.text}</p>
                   <span>{format(message?.createdAt?.toDate())}</span>
@@ -202,7 +206,7 @@ const Chat = () => {
           <div ref={lastMessageRef}></div>
         </div>
 
-        {img.length > 0 && (
+        {(img.length > 0 || capturedImage) && (
           <div className="textImage">
             {img.map((imgItem) => (
               <div className="imgItem" key={imgItem.url}>
@@ -215,6 +219,17 @@ const Chat = () => {
                 <img src={imgItem.url} alt="" />
               </div>
             ))}
+            {capturedImage && (
+              <div className="imgItem">
+                <img
+                  className="closeBtn"
+                  src="/close.png"
+                  alt=""
+                  onClick={() => removeCapturedImage()}
+                />
+                <img src={capturedImage} alt="" />
+              </div>
+            )}
           </div>
         )}
 
