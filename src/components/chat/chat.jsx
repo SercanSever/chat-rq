@@ -29,7 +29,7 @@ const Chat = () => {
     setInputValue((prev) => prev + e.emoji);
     setOpenEmoji(false);
   };
-  //Todo implement img uplaod function
+
   const handleImage = async (e) => {
     if (!e.target.files) return;
     const files = Array.from(e.target.files);
@@ -37,24 +37,20 @@ const Chat = () => {
       file,
       url: URL.createObjectURL(file),
     }));
-
-    setImg((prev) => [...prev, newImages]);
+    setImg(newImages);
   };
 
-  useEffect(() => {
-    console.log(img);
-  }, [img]);
-
   const handleSendMessage = async () => {
-    if (inputValue === "") return;
+    if (inputValue === "" && img.length === 0) return;
 
     try {
-      let uploadChatFile;
-      if (img.file) {
-        uploadChatFile = await uploadChatFileCloudinary({
-          file: img.file,
-          chatId,
+      let uploadChatFile = [];
+      if (img.length > 0) {
+        const uploadPromises = img.map(async (imgItem) => {
+          const url = await uploadChatFileCloudinary(imgItem.file, chatId);
+          return url;
         });
+        uploadChatFile = await Promise.all(uploadPromises);
       }
 
       const text = inputValue.trim();
@@ -63,7 +59,7 @@ const Chat = () => {
           senderId: currentUser.id,
           text: text,
           createdAt: new Date(),
-          ...(uploadChatFile && { img: uploadChatFile }),
+          images: uploadChatFile,
         }),
       });
 
@@ -89,8 +85,12 @@ const Chat = () => {
     } catch (error) {
       console.log(error);
     }
-    setImg({ file: null, url: "" });
+    setImg([]);
     setInputValue("");
+  };
+
+  const handleRemoveImage = (url) => {
+    setImg((image) => image.filter((x) => x.url !== url));
   };
 
   useEffect(() => {
@@ -132,10 +132,6 @@ const Chat = () => {
     };
   }, []);
 
-  const handleRemoveImage = () => {
-    setImg({ file: null, url: "" });
-  };
-
   return (
     <div className="chat">
       <div className="top">
@@ -169,7 +165,12 @@ const Chat = () => {
               key={message?.createdAt}
             >
               <div className="texts">
-                {/* {message.img && <img src={message.img} alt="" />} */}
+                <div className="messageImages">
+                  {message.images &&
+                    message.images.map((item) => {
+                      return <img src={item} key={item} alt="" />;
+                    })}
+                </div>
                 <p>{message?.text}</p>
                 <span>{format(message?.createdAt?.toDate())}</span>
               </div>
@@ -179,17 +180,19 @@ const Chat = () => {
         <div ref={lastMessageRef}></div>
       </div>
 
-      {img.url && (
+      {img.length > 0 && (
         <div className="textImage">
-          <div className="imgItem">
-            <img
-              className="closeBtn"
-              src="/close.png"
-              alt=""
-              onClick={handleRemoveImage}
-            />
-            <img src={img.url} alt="" />
-          </div>
+          {img.map((imgItem) => (
+            <div className="imgItem" key={imgItem.url}>
+              <img
+                className="closeBtn"
+                src="/close.png"
+                alt=""
+                onClick={() => handleRemoveImage(imgItem.url)}
+              />
+              <img src={imgItem.url} alt="" />
+            </div>
+          ))}
         </div>
       )}
 
@@ -208,7 +211,8 @@ const Chat = () => {
           <img src="/camera.png" alt="" />
           <img src="/mic.png" alt="" />
         </div>
-        <input
+        <textarea
+          rows={1}
           type="text"
           placeholder="Send a message"
           className="textInput"

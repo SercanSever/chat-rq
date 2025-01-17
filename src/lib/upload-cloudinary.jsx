@@ -30,7 +30,7 @@ export const uploadCloudinary = async ({ file, userId }) => {
   }
 };
 
-export const uploadChatFileCloudinary = async ({ file, chatId }) => {
+export const uploadChatFileCloudinary = async (file, chatId) => {
   const formData = new FormData();
   formData.append("file", file);
   formData.append(

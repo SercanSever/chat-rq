@@ -127,7 +127,7 @@ const ChatList = () => {
               <img src={chat.user.avatar || "/avatar.png"} alt="" />
               <div className="texts">
                 <span>{chat.user.username}</span>
-                <p>{chat.lasMessage}</p>
+                <p>{chat.lastMessage}</p>
               </div>
             </div>
           ))}
