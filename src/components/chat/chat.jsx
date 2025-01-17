@@ -20,6 +20,7 @@ import {
 } from "../../stores/image-store.jsx";
 import ImageCapture from "./image-capture/image-capture.jsx";
 import { use } from "react";
+import AudioRecorder from "./audio-recorder/audio-recorder.jsx";
 
 const Chat = () => {
   const [openEmoji, setOpenEmoji] = useState(false);
@@ -247,7 +248,7 @@ const Chat = () => {
             />
             <img src="/camera.png" alt="" onClick={() => changeIsOpen(true)} />
 
-            <img src="/mic.png" alt="" />
+            <AudioRecorder />
           </div>
           <textarea
             rows={1}
