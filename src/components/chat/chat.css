@@ -66,6 +66,7 @@
     overflow-y: overlay;
     transition: overflow-y 0.5s;
     gap: 20px;
+    padding: 20px;
     scrollbar-width: none; /* Firefox için */
     -ms-overflow-style: none; /* IE ve Edge için */
 
@@ -77,7 +78,6 @@
       border-radius: 10px;
       padding: 10px;
       overflow-wrap: break-word; /* Ensure long words break to the next line */
-
       &.own {
         align-self: flex-end;
         background-color: rgba(72, 57, 137, 0.6);

@@ -42,6 +42,7 @@ const Detail = () => {
       infoElement.removeEventListener("scroll", handleScroll);
     };
   }, []);
+
   return (
     <div className="detail">
       <div className="user">

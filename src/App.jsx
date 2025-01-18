@@ -9,10 +9,13 @@ import { onAuthStateChanged } from "firebase/auth";
 import { auth } from "./lib/firebase";
 import { useUserStore } from "./stores/user-store.jsx";
 import { useChatStore } from "./stores/chat-store.jsx";
+import { useComponentStore } from "./stores/component-store.jsx";
 
 function App() {
   const { currentUser, isLoading, fetchUserInfo } = useUserStore();
   const { chatId } = useChatStore();
+  const { isHidden } = useComponentStore();
+
   useEffect(() => {
     const unSub = onAuthStateChanged(auth, (user) => {
       if (user) {
@@ -36,7 +39,7 @@ function App() {
         <>
           <List />
           {chatId && <Chat />}
-          {chatId && <Detail />}
+          {chatId && isHidden && <Detail />}
         </>
       )}
       <Notification />

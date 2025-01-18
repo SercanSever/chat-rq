@@ -21,6 +21,7 @@ import {
   useImageStore,
 } from "../../stores/image-store.jsx";
 import { useAudioStore } from "../../stores/audio-store.jsx";
+import { useComponentStore } from "../../stores/component-store.jsx";
 
 const Chat = () => {
   const [openEmoji, setOpenEmoji] = useState(false);
@@ -37,8 +38,8 @@ const Chat = () => {
   const { isOpen, changeIsOpen, capturedImage, removeCapturedImage } =
     useCaptureImageStore();
   const { audio, removeAudioFromStore } = useAudioStore();
+  const { changeVisibility } = useComponentStore();
 
-  console.log(isCurrentUserBlocked);
   const handleEmoji = (e) => {
     setInputValue((prev) => prev + e.emoji);
     setOpenEmoji(false);
@@ -178,7 +179,7 @@ const Chat = () => {
           <div className="icons">
             <img src="/phone.png" alt="" />
             <img src="/video.png" alt="" />
-            <img src="/info.png" alt="" />
+            <img src="/info.png" alt="" onClick={() => changeVisibility()} />
           </div>
         </div>
         <div
