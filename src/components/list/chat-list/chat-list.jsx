@@ -9,9 +9,10 @@ import { useChatStore } from "../../../stores/chat-store.jsx";
 const ChatList = () => {
   const [addMode, setAddMode] = useState(false);
   const [chats, setChats] = useState([]);
+  const [isScrolling, setIsScrolling] = useState(false);
+  const [search, setSearch] = useState("");
   const addUserButtonRef = useRef(null);
   const addModeButtonRef = useRef(null);
-  const [isScrolling, setIsScrolling] = useState(false);
   const chatListItemRef = useRef();
   const { currentUser } = useUserStore();
   const { changeChat } = useChatStore();
@@ -53,6 +54,10 @@ const ChatList = () => {
     changeChat(chat.chatId, chat.user);
   };
 
+  const filteredChats = chats.filter((chat) =>
+    chat.user.username.toLowerCase().includes(search.toLowerCase())
+  );
+
   useEffect(() => {
     const unSub = onSnapshot(
       doc(db, "userChats", currentUser.id),
@@ -68,6 +73,7 @@ const ChatList = () => {
         });
 
         const chatData = await Promise.all(promises);
+
         setChats(chatData.sort((a, b) => b.updatedAt - a.updatedAt));
       }
     );
@@ -76,7 +82,7 @@ const ChatList = () => {
       unSub();
       document.removeEventListener("mousedown", handleClickOutside);
     };
-  }, [currentUser.id]);
+  }, [currentUser.id, search]);
 
   useEffect(() => {
     const chatListElement = chatListItemRef.current;
@@ -94,12 +100,17 @@ const ChatList = () => {
       chatListElement.removeEventListener("scroll", handleScroll);
     };
   }, []);
+
   return (
     <div className="chatList">
       <div className="search">
         <div className="searchBar">
           <img src="/search.png" alt="" />
-          <input type="text" placeholder="Search for friends" />
+          <input
+            type="text"
+            placeholder="Search for friends"
+            onChange={(e) => setSearch(e.target.value)}
+          />
         </div>
         <img
           src={addMode ? "/minus.png" : "/plus.png"}
@@ -117,8 +128,8 @@ const ChatList = () => {
           overflowY: isScrolling ? "scroll" : "auto", // Webkit tabanlı tarayıcılar
         }}
       >
-        {chats &&
-          chats.map((chat) => (
+        {filteredChats &&
+          filteredChats.map((chat) => (
             <div
               className={`item ${chat.isSeen ? "seen" : "unseen"}`}
               key={chat.chatId}
@@ -134,76 +145,6 @@ const ChatList = () => {
               </div>
             </div>
           ))}
-        <div className="item">
-          <img src="/avatar.png" alt="" />
-          <div className="texts">
-            <span>test üst</span>
-            <p>Lorem ipsum dolor</p>
-          </div>
-        </div>
-        <div className="item">
-          <img src="/avatar.png" alt="" />
-          <div className="texts">
-            <span>John Doe</span>
-            <p>Lorem ipsum dolor</p>
-          </div>
-        </div>
-        <div className="item">
-          <img src="/avatar.png" alt="" />
-          <div className="texts">
-            <span>John Doe</span>
-            <p>Lorem ipsum dolor</p>
-          </div>
-        </div>
-        <div className="item">
-          <img src="/avatar.png" alt="" />
-          <div className="texts">
-            <span>John Doe</span>
-            <p>Lorem ipsum dolor</p>
-          </div>
-        </div>
-        <div className="item">
-          <img src="/avatar.png" alt="" />
-          <div className="texts">
-            <span>John Doe</span>
-            <p>Lorem ipsum dolor</p>
-          </div>
-        </div>
-        <div className="item">
-          <img src="/avatar.png" alt="" />
-          <div className="texts">
-            <span>John Doe</span>
-            <p>Lorem ipsum dolor</p>
-          </div>
-        </div>
-        <div className="item">
-          <img src="/avatar.png" alt="" />
-          <div className="texts">
-            <span>John Doe</span>
-            <p>Lorem ipsum dolor</p>
-          </div>
-        </div>
-        <div className="item">
-          <img src="/avatar.png" alt="" />
-          <div className="texts">
-            <span>test 3</span>
-            <p>Lorem ipsum dolor</p>
-          </div>
-        </div>
-        <div className="item">
-          <img src="/avatar.png" alt="" />
-          <div className="texts">
-            <span>test 2 </span>
-            <p>Lorem ipsum dolor</p>
-          </div>
-        </div>
-        <div className="item">
-          <img src="/avatar.png" alt="" />
-          <div className="texts">
-            <span>test 1</span>
-            <p>Lorem ipsum dolor</p>
-          </div>
-        </div>
       </div>
       {addMode && <AddUser />}
     </div>
