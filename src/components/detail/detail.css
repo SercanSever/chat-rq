@@ -3,6 +3,7 @@
   padding: 15px;
   display: flex;
   flex-direction: column;
+  justify-content: space-between;
   border-left: 1px solid rgba(0, 0, 0, 0.341);
   height: 100%;
   overflow: hidden;
@@ -34,12 +35,11 @@
     display: flex;
     flex-direction: column;
     gap: 20px;
-    padding-top: 20px;
     overflow-y: hidden;
     overflow-y: overlay;
     transition: overflow-y 0.5s;
-    padding-bottom: 10px;
-
+    padding-top: 10px;
+    margin-bottom: auto;
     scrollbar-width: none; /* Firefox için */
     -ms-overflow-style: none; /* IE ve Edge için */
 
@@ -60,10 +60,20 @@
       }
 
       .photos {
-        display: flex;
-        flex-direction: column;
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(30px, 1fr));
         gap: 20px;
         padding-top: 20px;
+        width: 100%;
+        max-height: 0;
+
+        &.open {
+          max-height: max-content;
+        }
+
+        &.closed {
+          max-height: 0;
+        }
 
         .photoItem {
           display: flex;
@@ -77,73 +87,21 @@
             gap: 10px;
 
             img {
-              width: 50px;
-              height: 50px;
+              width: 40px;
+              height: 40px;
               background: none;
               padding: 0;
               cursor: pointer;
             }
-
-            span {
-              font-size: 14px;
-              font-weight: 300;
-              color: rgba(255, 255, 255, 0.7);
-            }
-          }
-
-          img {
-            width: 30px;
-            height: 30px;
-            background-color: rgba(0, 0, 0, 0.418);
-            padding: 10px;
-            cursor: pointer;
-            border-radius: 10px;
-            object-fit: cover;
           }
         }
       }
 
-      .files {
-        display: flex;
-        flex-direction: column;
-        gap: 20px;
-        padding-top: 20px;
-
-        .fileItems {
-          display: flex;
-          justify-content: space-between;
-          align-items: center;
-          gap: 20px;
-
-          .fileDetail {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-
-            img {
-              width: 50px;
-              height: 50px;
-              background: none;
-              padding: 0;
-              cursor: pointer;
-            }
-
-            span {
-              font-size: 14px;
-              font-weight: 300;
-              color: rgba(255, 255, 255, 0.7);
-            }
-          }
-
-          img {
-            width: 30px;
-            height: 30px;
-            background-color: rgba(0, 0, 0, 0.418);
-            padding: 10px;
-            cursor: pointer;
-            border-radius: 10px;
-            object-fit: cover;
-          }
+      .content {
+        p {
+          font-size: 14px;
+          font-weight: 300;
+          color: rgba(255, 255, 255, 0.7);
         }
       }
     }
@@ -153,34 +111,11 @@
     display: none; /* Webkit tabanlı tarayıcılar için */
   }
 
-  /* Tüm scroll barlar için genel stil */
-  .info::-webkit-scrollbar {
-    width: var(--sb-size);
-    height: var(--sb-size);
-  }
-
-  .info::-webkit-scrollbar-track {
-    background: var(--sb-track-color);
-    border-radius: 15px;
-  }
-
-  .info::-webkit-scrollbar-thumb {
-    background: var(--sb-thumb-color);
-    border-radius: 15px;
-  }
-
-  /* Modern Tarayıcılar İçin */
-  .info {
-    scrollbar-color: var(--sb-thumb-color) var(--sb-track-color);
-    scrollbar-width: thin; /* Firefox için */
-  }
-
   .buttons {
     display: flex;
     justify-content: space-between;
     padding: 15px;
     padding-top: 35px;
-
     border-top: 1px solid rgba(0, 0, 0, 0.341);
 
     button {
