@@ -1,5 +1,6 @@
 import "./user-info.css";
 import { useUserStore } from "../../../stores/user-store.jsx";
+import { auth } from "../../../lib/firebase.jsx";
 const UserInfo = () => {
   const { currentUser } = useUserStore();
 
@@ -12,6 +13,9 @@ const UserInfo = () => {
         />
         <h3>{currentUser.username}</h3>
       </div>
+      <button className="logout" onClick={() => auth.signOut()}>
+        Logout
+      </button>
       <div className="icons">
         <img src="/more.png" alt="" />
         <img src="/video.png" alt="" />

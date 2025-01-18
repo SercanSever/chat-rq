@@ -124,7 +124,10 @@ const ChatList = () => {
               key={chat.chatId}
               onClick={() => handleSelect(chat)}
             >
-              <img src={chat.user.avatar || "/avatar.png"} alt="" />
+              <img
+                src={chat.user.avatar || "/chat-rq-logo-background.png"}
+                alt=""
+              />
               <div className="texts">
                 <span>{chat.user.username}</span>
                 <p>{chat.lastMessage}</p>
@@ -202,7 +205,7 @@ const ChatList = () => {
           </div>
         </div>
       </div>
-      {addMode && <AddUser ref={addUserButtonRef} />}
+      {addMode && <AddUser />}
     </div>
   );
 };

@@ -30,13 +30,15 @@ const Chat = () => {
   const [isScrolling, setIsScrolling] = useState(false);
   const lastMessageRef = useRef(true);
   const centerRef = useRef();
-  const { chatId, user } = useChatStore();
+  const { chatId, user, isCurrentUserBlocked, isReceiverBlocked } =
+    useChatStore();
   const { currentUser } = useUserStore();
   const { storedImage, addImageToStore } = useImageStore();
   const { isOpen, changeIsOpen, capturedImage, removeCapturedImage } =
     useCaptureImageStore();
   const { audio, removeAudioFromStore } = useAudioStore();
 
+  console.log(isCurrentUserBlocked);
   const handleEmoji = (e) => {
     setInputValue((prev) => prev + e.emoji);
     setOpenEmoji(false);
@@ -166,12 +168,13 @@ const Chat = () => {
       <div className="chat">
         <div className="top">
           <div className="user">
-            <img src={user.avatar || "/avatar.png"} alt="" />
+            <img src={user?.avatar || "chat-rq-logo-background.png"} alt="" />
             <div className="texts">
-              <span>{user.username}</span>
+              <span>{user?.username}</span>
               <p>Lorem ipsum dolor sit amet, consectetur</p>
             </div>
           </div>
+
           <div className="icons">
             <img src="/phone.png" alt="" />
             <img src="/video.png" alt="" />
@@ -262,7 +265,12 @@ const Chat = () => {
           <textarea
             rows={1}
             type="text"
-            placeholder="Send a message"
+            placeholder={
+              isCurrentUserBlocked || isReceiverBlocked
+                ? "You can't send message"
+                : "Type a message"
+            }
+            disabled={isCurrentUserBlocked || isReceiverBlocked}
             className="textInput"
             onChange={(e) => setInputValue(e.target.value)}
             value={inputValue}
@@ -279,7 +287,11 @@ const Chat = () => {
               onClick={() => setOpenEmoji((prev) => !prev)}
             />
           </div>
-          <button className="sendButton" onClick={handleSendMessage}>
+          <button
+            className="sendButton"
+            onClick={handleSendMessage}
+            disabled={isCurrentUserBlocked || isReceiverBlocked}
+          >
             Send
           </button>
         </div>
