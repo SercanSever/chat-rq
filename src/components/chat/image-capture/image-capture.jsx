@@ -1,4 +1,4 @@
-import React, { useRef } from "react";
+import { useRef } from "react";
 import Webcam from "react-webcam";
 import { useCaptureImageStore } from "../../../stores/image-store.jsx";
 import "./image-capture.css";

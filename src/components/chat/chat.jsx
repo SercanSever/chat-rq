@@ -20,6 +20,7 @@ import {
   useCaptureImageStore,
   useImageStore,
 } from "../../stores/image-store.jsx";
+import { useAudioStore } from "../../stores/audio-store.jsx";
 
 const Chat = () => {
   const [openEmoji, setOpenEmoji] = useState(false);
@@ -34,6 +35,7 @@ const Chat = () => {
   const { storedImage, addImageToStore } = useImageStore();
   const { isOpen, changeIsOpen, capturedImage, removeCapturedImage } =
     useCaptureImageStore();
+  const { audio, removeAudioFromStore } = useAudioStore();
 
   const handleEmoji = (e) => {
     setInputValue((prev) => prev + e.emoji);
@@ -51,7 +53,8 @@ const Chat = () => {
   };
 
   const handleSendMessage = async () => {
-    if (inputValue === "" && img.length === 0 && !capturedImage) return;
+    if (inputValue === "" && img.length === 0 && !capturedImage && !audio)
+      return;
 
     try {
       let uploadChatFile = [];
@@ -67,6 +70,13 @@ const Chat = () => {
         const url = await uploadChatFileCloudinary(capturedImage, chatId);
         uploadChatFile.push(url);
       }
+
+      if (audio) {
+        const url = await uploadChatFileCloudinary(audio, chatId);
+        uploadChatFile.push(url);
+      }
+
+      console.log(uploadChatFile);
 
       const text = inputValue.trim();
       await updateDoc(doc(db, "chats", chatId), {
@@ -103,6 +113,7 @@ const Chat = () => {
     setImg([]);
     setInputValue("");
     removeCapturedImage();
+    removeAudioFromStore();
   };
 
   const handleRemoveImage = (url) => {
@@ -190,7 +201,7 @@ const Chat = () => {
                     {message.images &&
                       message.images.map((item) => (
                         <img
-                          src={item}
+                          src={item.endsWith(".webm") ? "/audio.png" : item}
                           key={item}
                           alt=""
                           onClick={() => addImageToStore(item)}
@@ -245,7 +256,7 @@ const Chat = () => {
               multiple={true}
               onChange={handleImage}
             />
-            <img src="/camera.png" alt="" onClick={() => changeIsOpen(true)} />s
+            <img src="/camera.png" alt="" onClick={() => changeIsOpen(true)} />
             <AudioRecorder />
           </div>
           <textarea
