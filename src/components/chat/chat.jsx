@@ -1,7 +1,14 @@
-import { useEffect, useRef, useState } from "react";
 import "./chat.css";
 import EmojiPicker from "emoji-picker-react";
+import CheckImage from "../check-image/check-image.jsx";
+import ImageCapture from "./image-capture/image-capture.jsx";
+import AudioRecorder from "./audio-recorder/audio-recorder.jsx";
+import { useEffect, useRef, useState } from "react";
 import { db } from "../../lib/firebase.jsx";
+import { useChatStore } from "../../stores/chat-store.jsx";
+import { useUserStore } from "../../stores/user-store.jsx";
+import { format } from "timeago.js";
+import { uploadChatFileCloudinary } from "../../lib/upload-cloudinary.jsx";
 import {
   arrayUnion,
   doc,
@@ -9,29 +16,21 @@ import {
   onSnapshot,
   updateDoc,
 } from "firebase/firestore";
-import { useChatStore } from "../../stores/chat-store.jsx";
-import { useUserStore } from "../../stores/user-store.jsx";
-import { format } from "timeago.js";
-import { uploadChatFileCloudinary } from "../../lib/upload-cloudinary.jsx";
-import CheckImage from "../check-image/check-image.jsx";
 import {
   useCaptureImageStore,
   useImageStore,
 } from "../../stores/image-store.jsx";
-import ImageCapture from "./image-capture/image-capture.jsx";
-import { use } from "react";
-import AudioRecorder from "./audio-recorder/audio-recorder.jsx";
 
 const Chat = () => {
   const [openEmoji, setOpenEmoji] = useState(false);
   const [inputValue, setInputValue] = useState("");
-  const lastMessageRef = useRef(true);
   const [chat, setChat] = useState([]);
   const [img, setImg] = useState([]);
+  const [isScrolling, setIsScrolling] = useState(false);
+  const lastMessageRef = useRef(true);
+  const centerRef = useRef();
   const { chatId, user } = useChatStore();
   const { currentUser } = useUserStore();
-  const [isScrolling, setIsScrolling] = useState(false);
-  const centerRef = useRef();
   const { storedImage, addImageToStore } = useImageStore();
   const { isOpen, changeIsOpen, capturedImage, removeCapturedImage } =
     useCaptureImageStore();
@@ -246,8 +245,7 @@ const Chat = () => {
               multiple={true}
               onChange={handleImage}
             />
-            <img src="/camera.png" alt="" onClick={() => changeIsOpen(true)} />
-
+            <img src="/camera.png" alt="" onClick={() => changeIsOpen(true)} />s
             <AudioRecorder />
           </div>
           <textarea
