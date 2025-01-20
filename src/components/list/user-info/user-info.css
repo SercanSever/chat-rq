@@ -19,6 +19,20 @@
       cursor: pointer;
     }
 
+    input {
+      border: 1px solid #000;
+      border-radius: 5px;
+      padding: 1px;
+      outline: none;
+      background: none;
+      font-size: 16px;
+      font-weight: 700;
+      color: whitesmoke;
+      cursor: pointer;
+      width: 70%;
+      padding: 2px;
+    }
+
     button {
       display: flex;
       align-items: center;
@@ -42,6 +56,17 @@
   .icons {
     display: flex;
     gap: 15px;
+
+    .yesIcon {
+      width: 15px;
+      height: 15px;
+      object-fit: cover;
+      cursor: pointer;
+
+      &:hover {
+        transform: scale(1.1);
+      }
+    }
 
     img {
       width: 15px;

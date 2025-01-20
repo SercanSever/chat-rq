@@ -249,10 +249,9 @@
     .emoji {
       position: relative;
       .picker {
-        position: fixed;
-        bottom: 100px; /* Adjust this value to position the picker correctly */
-        left: 50%; /* Center horizontally */
-        transform: translateX(-50%); /* Center horizontally */
+        position: absolute;
+        bottom: 60px;
+        transform: translateX(-90%);
         z-index: 10;
         background-color: white;
         border: 1px solid rgba(0, 0, 0, 0.1);

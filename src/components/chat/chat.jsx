@@ -79,8 +79,6 @@ const Chat = () => {
         uploadChatFile.push(url);
       }
 
-      console.log(uploadChatFile);
-
       const text = inputValue.trim();
       await updateDoc(doc(db, "chats", chatId), {
         messages: arrayUnion({

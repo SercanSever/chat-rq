@@ -113,10 +113,10 @@ const Login = () => {
           <button disabled={loading}>{loading ? "Loading..." : "Login"}</button>
         </form>
         <span onClick={() => setSeperator(false)}>
-          Don't you have an account ?
+          Don&apos;t you have an account ?
         </span>
       </div>
-      <div className={seperator ? "seperator login" : "seperator"}>
+      <div className={seperator ? "seperator loginSide" : "seperator"}>
         <div className="seperatorContent">
           <img src="/chat-rq-logo-background.png" alt="" />
 
@@ -164,7 +164,7 @@ const Login = () => {
             {loading ? "Loading..." : "Signup"}
           </button>
         </form>
-        <span onClick={() => setSeperator(true)}>Let's login!</span>
+        <span onClick={() => setSeperator(true)}>Let&apos;s login!</span>
       </div>
     </div>
   );
