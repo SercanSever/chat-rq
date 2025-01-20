@@ -4,6 +4,7 @@ import { auth, db } from "../../../lib/firebase.jsx";
 import { useChatStore } from "../../../stores/chat-store.jsx";
 import { useEffect, useRef, useState } from "react";
 import { doc, updateDoc } from "firebase/firestore";
+import { uploadCloudinary } from "../../../lib/upload-cloudinary.jsx";
 const UserInfo = () => {
   const { currentUser } = useUserStore();
   const { chatId } = useChatStore();
@@ -13,6 +14,16 @@ const UserInfo = () => {
   const [nameChangeControl, setNameChangeControl] = useState(false);
   const [isDropdownVisible, setIsDropdownVisible] = useState(false);
   const [deleteAccountPopup, setDeleteAccountPopup] = useState(false);
+  const [userAvatar, setUserAvatar] = useState({
+    file: null,
+    url: "",
+  });
+
+  const handleUserAvatar = async (e) => {
+    if (!e.target.files[0]) return;
+    const file = e.target.files[0];
+    setUserAvatar({ file, url: URL.createObjectURL(file) });
+  };
 
   const handleNameChange = () => {
     setNameChangeControl(!nameChangeControl);
@@ -41,6 +52,32 @@ const UserInfo = () => {
     setDeleteAccountPopup(true);
   };
 
+  const handleDeleteUser = async () => {
+    const userRef = doc(db, "users", currentUser.id);
+    await updateDoc(userRef, {
+      isDeleted: true,
+    });
+    auth.signOut();
+  };
+
+  const handleImageUpdate = async (e) => {
+    e.preventDefault();
+    if (!userAvatar.file) return;
+    let cloudinaryUrl = "";
+    if (userAvatar.file !== null) {
+      cloudinaryUrl = await uploadCloudinary({
+        file: userAvatar.file,
+        userId: currentUser.id,
+      });
+    }
+    const userRef = doc(db, "users", currentUser.id);
+    await updateDoc(userRef, {
+      avatar: cloudinaryUrl || "",
+    });
+    setUserAvatar({ file: null, url: "" });
+    currentUser.avatar = cloudinaryUrl;
+  };
+
   useEffect(() => {
     const handleClickOutside = (e) => {
       if (
@@ -65,18 +102,36 @@ const UserInfo = () => {
         <div className="deleteAccount">
           <p>Are you sure ?</p>
           <div className="deleteIcons">
-            <img src="/letter-x.png" alt="" />
-            <img src="/check.png" alt="" />
+            <img
+              src="/letter-x.png"
+              alt=""
+              onClick={() => setDeleteAccountPopup(false)}
+            />
+            <img src="/check.png" alt="" onClick={handleDeleteUser} />
           </div>
         </div>
       )}
       {!deleteAccountPopup && (
         <div className="user">
-          <img
-            src={currentUser.avatar || "/chat-rq-logo-background.png"}
-            alt=""
-          />
-
+          <form onSubmit={handleImageUpdate}>
+            <label htmlFor="file">
+              <img
+                src={
+                  currentUser.avatar ||
+                  userAvatar.url ||
+                  "/chat-rq-logo-background.png"
+                }
+                alt=""
+              />
+            </label>
+            <input
+              type="file"
+              id="file"
+              style={{ display: "none" }}
+              onChange={handleUserAvatar}
+            />
+            <button className={userAvatar.url ? "" : "hide"}>Update</button>
+          </form>
           {!nameChangeControl ? (
             <h4>{currentUser.username}</h4>
           ) : (

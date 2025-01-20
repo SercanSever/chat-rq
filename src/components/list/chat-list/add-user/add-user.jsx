@@ -79,7 +79,7 @@ const AddUser = () => {
       {user && (
         <div className="user">
           <div className="detail">
-            <img src={user.avatar || "/avatar.png"} alt="" />
+            <img src={user.avatar || "/chat-rq-logo-background.png"} alt="" />
             <p>{user.username}</p>
           </div>
           {user && <button onClick={handleAddUser}>Add User</button>}
