@@ -5,6 +5,33 @@
   gap: 5px;
   padding: 15px;
 
+  .deleteAccount {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 20px;
+    width: 100%;
+
+    p {
+      font-size: 16px;
+      font-weight: 700;
+      color: whitesmoke;
+    }
+
+    .deleteIcons {
+      img {
+        margin-right: 5px;
+        width: 20px;
+        height: 20px;
+        object-fit: cover;
+        cursor: pointer;
+        &:hover {
+          transform: scale(1.1);
+        }
+      }
+    }
+  }
+
   .user {
     display: flex;
     align-items: center;
@@ -67,28 +94,30 @@
 
     .dropdownMenu {
       position: absolute;
+      display: flex;
+      flex-direction: column;
+      gap: 30px;
       top: 15px;
       left: 0;
       background-color: rgba(9, 5, 5, 0.7);
       border-radius: 5px;
       width: max-content;
       box-shadow: 0 4px 6px rgba(0 0, 0, 0.1);
-      z-index: 10;
+      z-index: 1000;
       padding: 20px 30px;
 
-      ul {
-        list-style: none;
-        li {
-          display: flex;
-          align-items: center;
-          gap: 10px;
-          padding: 10px 10px;
-          width: 100%;
+      button {
+        border: none;
+        background: none;
+        color: whitesmoke;
+        cursor: pointer;
 
-          cursor: pointer;
-          &:hover {
-            transform: scale(1.05);
-          }
+        &.logout {
+          color: #ff0000;
+        }
+
+        &:hover {
+          transform: scale(1.05);
         }
       }
     }
