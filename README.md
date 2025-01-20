@@ -3,12 +3,14 @@
 ## 📱 Screenshots
 
 ### Authentication
+
 <p float="left">
   <img src=".github/screenshots/login_bok6yd.png" width="200" alt="Login Screen" />
   <img src=".github/screenshots/signup_lpjch3.png" width="200" alt="Signup Screen" />
 </p>
 
 ### Chat Interface
+
 <p float="left">
   <img src=".github/screenshots/chatlist_cwnjph.png" width="200" alt="Chat List" />
   <img src=".github/screenshots/full-chat_gucwmu.png" width="200" alt="Full Chat View" />
@@ -16,6 +18,7 @@
 </p>
 
 ### Features
+
 <p float="left">
   <img src=".github/screenshots/emoji_uaudon.png" width="200" alt="Emoji Picker" />
   <img src=".github/screenshots/send-image_u19rxo.png" width="200" alt="Send Image" />
@@ -23,6 +26,7 @@
 </p>
 
 ### Voice Recording
+
 <p float="left">
   <img src=".github/screenshots/voice-recorder_mbzo31.png" width="200" alt="Voice Recorder" />
   <img src=".github/screenshots/voice-recorder-chat_ic0625.png" width="200" alt="Voice Recording in Chat" />
