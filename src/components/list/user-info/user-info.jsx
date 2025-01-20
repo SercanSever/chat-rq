@@ -20,6 +20,7 @@ const UserInfo = () => {
   });
 
   const handleUserAvatar = async (e) => {
+    console.log(e.target.files[0]);
     if (!e.target.files[0]) return;
     const file = e.target.files[0];
     setUserAvatar({ file, url: URL.createObjectURL(file) });
@@ -114,7 +115,7 @@ const UserInfo = () => {
       {!deleteAccountPopup && (
         <div className="user">
           <form onSubmit={handleImageUpdate}>
-            <label htmlFor="file">
+            <label htmlFor="userAvatar">
               <img
                 src={
                   currentUser.avatar ||
@@ -126,7 +127,7 @@ const UserInfo = () => {
             </label>
             <input
               type="file"
-              id="file"
+              id="userAvatar"
               style={{ display: "none" }}
               onChange={handleUserAvatar}
             />

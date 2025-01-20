@@ -154,7 +154,10 @@ const Detail = () => {
                     onClick={() => addImageToStore(image)}
                   >
                     <div className="photoDetail">
-                      <img src={image} alt="" />
+                      <img
+                        src={image.endsWith(".webm") ? "/audio.png" : image}
+                        alt=""
+                      />
                     </div>
                   </div>
                 ))}
