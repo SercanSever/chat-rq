@@ -11,6 +11,29 @@
   border-radius: 15px;
   background-color: rgba(124, 123, 123, 0.8);
 
+  .download {
+    display: flex;
+    justify-content: center;
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    cursor: pointer;
+    z-index: 200;
+
+    img {
+      width: 30px;
+      height: 30px;
+      box-shadow: none;
+      object-fit: cover;
+    }
+
+    &:hover {
+      img {
+        transform: scale(1.1);
+      }
+    }
+  }
+
   .close {
     display: flex;
     justify-content: center;

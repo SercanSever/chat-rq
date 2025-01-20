@@ -7,8 +7,9 @@ import { doc, updateDoc } from "firebase/firestore";
 const UserInfo = () => {
   const { currentUser } = useUserStore();
   const { chatId } = useChatStore();
-  const [nameChangeControl, setNameChangeControl] = useState(false);
   const inputRef = useRef(null);
+  const [nameChangeControl, setNameChangeControl] = useState(false);
+  const [isDropdownVisible, setIsDropdownVisible] = useState(false);
 
   const handleNameChange = () => {
     setNameChangeControl(!nameChangeControl);
@@ -27,6 +28,10 @@ const UserInfo = () => {
       username: inputValue,
     });
     currentUser.username = inputValue;
+  };
+
+  const toggleDropdown = () => {
+    setIsDropdownVisible((prev) => !prev);
   };
 
   useEffect(() => {
@@ -60,7 +65,21 @@ const UserInfo = () => {
       <div className="icons">
         {!nameChangeControl ? (
           <>
-            <img src="/more.png" alt="" />
+            <img
+              src="/more.png"
+              alt=""
+              onClick={toggleDropdown}
+              className="dropdownIcon"
+            />
+            {isDropdownVisible && (
+              <div className="dropdownMenu">
+                <ul>
+                  <li>Option 1</li>
+                  <li>Option 2</li>
+                  <li onClick={() => auth.signOut()}>Logout</li>
+                </ul>
+              </div>
+            )}
             <img src="/edit.png" alt="" onClick={handleNameChange} />
           </>
         ) : (

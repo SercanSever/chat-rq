@@ -146,19 +146,16 @@ const ChatList = () => {
             </div>
           ))}
 
-        {/* {filteredChats.length === 2 && (
+        {filteredChats.length === 0 && (
           <div className="empty">
             <h3>Sorry :( No chats found</h3>
             <p>
-              Invite your friends and start chatting instantly! Just enter their
-              email below and send them an email notification.
+              Invite your friends and start chatting instantly! Just click
+              <img src="/plus.png" alt="" />
+              and enter their email or username to connect.
             </p>
-            <div className="sendEmail">
-              <input type="text" />
-              <button>Send Invitation</button>
-            </div>
           </div>
-        )} */}
+        )}
       </div>
       {addMode && <AddUser />}
     </div>

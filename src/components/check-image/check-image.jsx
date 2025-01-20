@@ -1,11 +1,14 @@
 import { useImageStore } from "../../stores/image-store";
+import DownloadImageWithFileSaver from "../download-image/download-image.jsx";
 import "./check-image.css";
 
 const CheckImage = () => {
   const { storedImage, removeStoredImage } = useImageStore();
-  console.log(storedImage);
   return (
     <div className="checkImage">
+      <div className="download">
+        <DownloadImageWithFileSaver imageUrl={storedImage} />
+      </div>
       <div className="close" onClick={removeStoredImage}>
         <img src="/close.png" alt="" />
       </div>

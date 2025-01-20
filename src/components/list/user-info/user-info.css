@@ -57,6 +57,42 @@
     display: flex;
     gap: 15px;
 
+    position: relative;
+    .dropdownIcon {
+      width: 15px;
+      height: 15px;
+      object-fit: cover;
+      cursor: pointer;
+    }
+
+    .dropdownMenu {
+      position: absolute;
+      top: 15px;
+      left: 0;
+      background-color: rgba(9, 5, 5, 0.7);
+      border-radius: 5px;
+      width: max-content;
+      box-shadow: 0 4px 6px rgba(0 0, 0, 0.1);
+      z-index: 10;
+      padding: 20px 30px;
+
+      ul {
+        list-style: none;
+        li {
+          display: flex;
+          align-items: center;
+          gap: 10px;
+          padding: 10px 10px;
+          width: 100%;
+
+          cursor: pointer;
+          &:hover {
+            transform: scale(1.05);
+          }
+        }
+      }
+    }
+
     .yesIcon {
       width: 15px;
       height: 15px;
